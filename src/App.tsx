@@ -29,7 +29,7 @@ function App() {
               hiddenFrom="sm"
               size="sm"
             />
-            <Text>Test</Text>
+            <Text>Fleet and Build</Text>
           </Group>
 
           <Group

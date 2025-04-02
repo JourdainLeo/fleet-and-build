@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .yarn/
+src/routeTree.gen.ts
 
 # Editor directories and files
 .vscode/*
