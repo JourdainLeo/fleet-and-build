@@ -13,6 +13,7 @@ function App() {
         breakpoint: "sm",
         collapsed: { desktop: true, mobile: !opened },
       }}
+      flex={1}
       padding="md"
     >
       <AppShell.Header>
@@ -71,7 +72,7 @@ function App() {
         </Button>
       </AppShell.Navbar>
 
-      <AppShell.Main>
+      <AppShell.Main flex={1}>
         <Outlet />
       </AppShell.Main>
     </AppShell>
