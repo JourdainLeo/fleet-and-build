@@ -1,17 +1,27 @@
-export interface ApiRoutes {
-  "/users": {
+import type { User } from "@fleet-and-build/types";
+
+export interface UserPostRequest {
+  name: string;
+  email: string;
+}
+
+export interface PostApiRoutes {
+  "/user": {
     POST: {
-      Body: { id: string; name: string; email: string };
+      Body: UserPostRequest;
       Reply: {
         success: boolean;
-        user: { id: string; name: string; email: string };
+        user: User;
       };
     };
+  };
+}
+
+export interface GetApiRoutes {
+  "/user/:id": {
     GET: {
-      Querystring?: never;
-      Params?: never;
-      Body?: never;
-      Reply: { users: { id: string; name: string; email: string }[] };
+      Params: { id: number };
+      Reply: User;
     };
   };
 }
