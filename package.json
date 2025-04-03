@@ -5,20 +5,19 @@
   "packageManager": "yarn@4.8.1",
   "workspaces": {
     "packages": [
-      "frontend",
-      "backend",
-      "packages/*"
+      "front",
+      "api"
     ]
   },
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build:front": "cd frontend && tsc -b && vite build",
-    "build:back": "cd backend && tsc -p tsconfig.json && tsc-alias",
-    "dev:front": "cd frontend && yarn dev",
-    "dev:back": "cd backend && tsx watch src/server.ts",
-    "migrate": "cd backend && yarn migrate",
-    "studio": "cd backend && yarn studio",
+    "build:front": "cd front && tsc -b && vite build",
+    "build:api": "cd api && tsc -p tsconfig.json && tsc-alias",
+    "dev:front": "cd front && yarn dev",
+    "dev:api": "cd api && tsx watch src/server.ts",
+    "migrate": "cd api && yarn migrate",
+    "studio": "cd api && yarn studio",
     "dc:up": "docker-compose up -d",
     "dc:down": "docker-compose down"
   },
@@ -34,6 +33,8 @@
   },
   "dependencies": {
     "@mantine/notifications": "^7.17.3",
-    "@tabler/icons-react": "^3.31.0"
+    "@sinclair/typebox": "^0.34.33",
+    "@tabler/icons-react": "^3.31.0",
+    "drizzle-typebox": "^0.3.1"
   }
 }

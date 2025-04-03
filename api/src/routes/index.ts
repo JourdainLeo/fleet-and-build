@@ -1,12 +1,13 @@
 // backend/src/users.ts
 
 import type {
+  Card,
   DeleteApiRoutes,
   GetApiRoutes,
   PostApiRoutes,
   PutApiRoutes,
+  User,
 } from "@fleet-and-build/api";
-import type { Card, User } from "@fleet-and-build/types";
 import { eq } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import { db } from "../db";

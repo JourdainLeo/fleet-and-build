@@ -1,4 +1,4 @@
-import type { User } from "@fleet-and-build/types";
+import type { User } from "@fleet-and-build/api";
 import React, { createContext, useContext, useState } from "react";
 import type { IStore } from "./model";
 

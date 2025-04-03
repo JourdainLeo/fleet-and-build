@@ -1,13 +1,15 @@
-import type { Card, User } from "@fleet-and-build/types";
+import type { Static } from "@sinclair/typebox";
+import type { cardSchema, userSchema } from "./db/schema";
 
-export interface UserPostRequest {
-  name: string;
-  email: string;
-}
+export type User = Static<typeof userSchema>;
+export type Card = Static<typeof cardSchema>;
 
 export interface PostApiRoutes {
   "/user": {
-    Body: UserPostRequest;
+    Body: {
+      name: string;
+      email: string;
+    };
     Reply: {
       success: boolean;
       user: User;

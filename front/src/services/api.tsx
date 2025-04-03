@@ -24,6 +24,10 @@ export class IApi {
       headers: { "Content-Type": "application/json" },
     });
 
+    if (!res.ok) {
+      throw new Error(`Error: ${res.status}`);
+    }
+
     return res.json();
   }
 
@@ -31,11 +35,17 @@ export class IApi {
     route: T,
     body: PostApiRoutes[T]["Body"],
   ): Promise<PostApiRoutes[T]["Reply"]> {
-    return fetch(`${BASE_URL}${route}`, {
+    const res = await fetch(`${BASE_URL}${route}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    }).then((res) => res.json());
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error: ${res.status}`);
+    }
+
+    return res.json();
   }
 
   async put<T extends keyof PutApiRoutes>(

@@ -1,4 +1,4 @@
-import type { Card } from "@fleet-and-build/types";
+import type { Card } from "@fleet-and-build/api";
 import {
   Button,
   Flex,
@@ -11,43 +11,23 @@ import { notifications } from "@mantine/notifications";
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Action } from "../components/Action";
+import { useApi } from "../services/api";
 import { useStore } from "../services/store";
 
-function Search() {
+function Collection() {
   const [query, setQuery] = useState("");
   const [cards, setCards] = useState<Card[]>([]);
-  const [next, setNext] = useState<string>(
-    "https://cards.fabtcg.com/api/search/v1/cards/",
-  );
   const store = useStore();
-  const [hoveredCard, setHoveredCard] = useState<Card | null>(null);
+  const api = useApi();
   useEffect(() => {
     const fetchCards = async () => {
-      const response = await fetch(
-        "https://cards.fabtcg.com/api/search/v1/cards/",
-      );
-      if (!response.ok) throw new Error("failed to load cards");
-
-      const data = await response.json();
-      setCards(data.results);
-      setNext(data.next);
+      const response = await api.get("/user/:id", { id: 1 });
+      store.setUser(response);
+      setCards(response.collection);
     };
 
     fetchCards();
   }, []);
-
-  // get  quantity from user collection
-  const getQuantity = (card: Card) => {
-    const userCollec = store.user?.collection;
-    const quantity = userCollec?.find(
-      (item) => item.card_id === card.card_id,
-    )?.quantity;
-    if (quantity) {
-      return quantity;
-    } else {
-      return 0;
-    }
-  };
 
   return (
     <Flex flex={1} h={"82vh"}>
@@ -67,9 +47,6 @@ function Search() {
                   key={index}
                   span={{ lg: 1.714, sm: 3, xs: 4, md: 3, xl: 2 }}
                   className="card-container"
-                  onMouseEnter={() => {
-                    setHoveredCard(item);
-                  }}
                 >
                   <Flex className="card">
                     <Image
@@ -81,7 +58,7 @@ function Search() {
                       <Action
                         className="card-button"
                         icon={<IconPlus />}
-                        label={getQuantity(item).toString()}
+                        label={item.quantity.toString()}
                         onClick={async ({ api, store }) => {
                           try {
                             const user = await api.put(
@@ -122,4 +99,4 @@ function Search() {
   );
 }
 
-export default Search;
+export default Collection;
