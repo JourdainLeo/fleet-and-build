@@ -34,3 +34,10 @@ export interface PutApiRoutes {
     Reply: User;
   };
 }
+
+export interface DeleteApiRoutes {
+  "/user/:id/collection/:card_id": {
+    Params: { id: number; card_id: string };
+    Reply: User;
+  };
+}

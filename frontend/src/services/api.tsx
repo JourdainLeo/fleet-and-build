@@ -19,10 +19,12 @@ export class IApi {
       throw new Error(`Missing parameter: ${key}`);
     });
 
-    return fetch(`${BASE_URL}${url}`, {
+    const res = await fetch(`${BASE_URL}${url}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-    }).then((res) => res.json());
+    });
+
+    return res.json();
   }
 
   async post<T extends keyof PostApiRoutes>(
@@ -48,11 +50,17 @@ export class IApi {
       throw new Error(`Missing parameter: ${key}`);
     });
 
-    return fetch(`${BASE_URL}${url}`, {
+    const res = await fetch(`${BASE_URL}${url}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    }).then((res) => res.json());
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error: ${res.status}`);
+    }
+
+    return res.json();
   }
 }
 

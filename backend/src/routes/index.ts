@@ -1,6 +1,7 @@
 // backend/src/users.ts
 
 import type {
+  DeleteApiRoutes,
   GetApiRoutes,
   PostApiRoutes,
   PutApiRoutes,
@@ -92,6 +93,42 @@ export async function userRoutes(fastify: FastifyInstance) {
         collection[cardIndex].quantity += 1;
       } else {
         collection.push({ ...card, quantity: 1 });
+      }
+
+      const [updated] = await db
+        .update(usersTable)
+        .set({ collection: JSON.stringify(collection) })
+        .where(eq(usersTable.id, id))
+        .returning();
+
+      if (!user) {
+        return reply.status(404).send();
+      }
+
+      return reply.send(updated as User);
+    },
+  );
+
+  fastify.put<DeleteApiRoutes["/user/:id/collection/:card_id"]>(
+    "/user/:id/collection/:card_id",
+    async (request, reply) => {
+      const { id, card_id } = request.params;
+
+      const [user] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.id, id));
+
+      const collection = user.collection as Card[];
+      const cardIndex = collection.findIndex(
+        (item) => item.card_id === card_id,
+      );
+
+      if (cardIndex !== -1) {
+        collection[cardIndex].quantity -= 1;
+        if (collection[cardIndex].quantity === 0) {
+          collection.splice(cardIndex, 1);
+        }
       }
 
       const [updated] = await db

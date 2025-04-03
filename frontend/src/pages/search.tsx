@@ -83,19 +83,27 @@ function Search() {
                         icon={<IconPlus />}
                         label={getQuantity(item).toString()}
                         onClick={async ({ api, store }) => {
-                          const user = await api.put(
-                            "/user/:id/collection",
-                            item,
-                            { id: 1 },
-                          );
+                          try {
+                            const user = await api.put(
+                              "/user/:id/collection",
+                              item,
+                              { id: 1 },
+                            );
 
-                          store.setUser(user);
+                            store.setUser(user);
 
-                          notifications.show({
-                            message: "Card added!",
-                            color: "red",
-                            position: "top-right",
-                          });
+                            notifications.show({
+                              message: "Card added!",
+                              color: "green",
+                              position: "top-right",
+                            });
+                          } catch (error) {
+                            notifications.show({
+                              message: "Error adding card.",
+                              color: "red",
+                              position: "top-right",
+                            });
+                          }
                         }}
                       />
                     </Flex>
