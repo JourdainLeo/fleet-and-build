@@ -1,4 +1,4 @@
-import type { User } from "@fleet-and-build/types";
+import type { Card, User } from "@fleet-and-build/types";
 
 export interface UserPostRequest {
   name: string;
@@ -7,21 +7,30 @@ export interface UserPostRequest {
 
 export interface PostApiRoutes {
   "/user": {
-    POST: {
-      Body: UserPostRequest;
-      Reply: {
-        success: boolean;
-        user: User;
-      };
+    Body: UserPostRequest;
+    Reply: {
+      success: boolean;
+      user: User;
     };
   };
 }
 
 export interface GetApiRoutes {
   "/user/:id": {
-    GET: {
-      Params: { id: number };
-      Reply: User;
-    };
+    Params: { id: number };
+    Reply: User;
+  };
+}
+
+export interface PutApiRoutes {
+  "/user/:id": {
+    Params: { id: number };
+    Body: { name: string; email: string };
+    Reply: User;
+  };
+  "/user/:id/collection": {
+    Params: { id: number };
+    Body: Card;
+    Reply: User;
   };
 }

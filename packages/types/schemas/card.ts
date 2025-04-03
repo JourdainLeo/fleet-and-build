@@ -22,4 +22,5 @@ export interface Card {
   text_html: string;
   typebox: string;
   url: string;
+  quantity: number;
 }

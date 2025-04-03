@@ -7,8 +7,11 @@ import {
   ScrollArea,
   TextInput,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useApi } from "../services/api";
+import { Action } from "../components/Action";
+import { useStore } from "../services/store";
 
 function Search() {
   const [query, setQuery] = useState("");
@@ -16,38 +19,35 @@ function Search() {
   const [next, setNext] = useState<string>(
     "https://cards.fabtcg.com/api/search/v1/cards/",
   );
-
-  const api = useApi();
-
+  const store = useStore();
+  const [hoveredCard, setHoveredCard] = useState<Card | null>(null);
   useEffect(() => {
     const fetchCards = async () => {
-      try {
-        const response = await fetch(
-          "https://cards.fabtcg.com/api/search/v1/cards/",
-        );
-        if (!response.ok)
-          throw new Error("Erreur lors du chargement des cartes");
+      const response = await fetch(
+        "https://cards.fabtcg.com/api/search/v1/cards/",
+      );
+      if (!response.ok) throw new Error("failed to load cards");
 
-        const data = await response.json();
-        setCards(data.results);
-        setNext(data.next);
-      } catch (err) {
-        console.log(err);
-      }
+      const data = await response.json();
+      setCards(data.results);
+      setNext(data.next);
     };
 
-    const fetchUser = async () => {
-      try {
-        const response = await api.get("/user/:id", { id: 1 });
-        console.log(response);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchUser();
     fetchCards();
   }, []);
+
+  // get  quantity from user collection
+  const getQuantity = (card: Card) => {
+    const userCollec = store.user?.collection;
+    const quantity = userCollec?.find(
+      (item) => item.card_id === card.card_id,
+    )?.quantity;
+    if (quantity) {
+      return quantity;
+    } else {
+      return 0;
+    }
+  };
 
   return (
     <Flex flex={1} h={"82vh"}>
@@ -66,8 +66,40 @@ function Search() {
                 <Grid.Col
                   key={index}
                   span={{ lg: 1.714, sm: 3, xs: 4, md: 3, xl: 2 }}
+                  className="card-container"
+                  onMouseEnter={() => {
+                    setHoveredCard(item);
+                  }}
                 >
-                  <Image src={item.image.normal} fit="contain" />
+                  <Flex className="card">
+                    <Image
+                      src={item.image.normal}
+                      fit="contain"
+                      className="card-image"
+                    />
+                    <Flex className="hover-bar">
+                      <Action
+                        className="card-button"
+                        icon={<IconPlus />}
+                        label={getQuantity(item).toString()}
+                        onClick={async ({ api, store }) => {
+                          const user = await api.put(
+                            "/user/:id/collection",
+                            item,
+                            { id: 1 },
+                          );
+
+                          store.setUser(user);
+
+                          notifications.show({
+                            message: "Card added!",
+                            color: "red",
+                            position: "top-right",
+                          });
+                        }}
+                      />
+                    </Flex>
+                  </Flex>
                 </Grid.Col>
               ))}
             </Grid>

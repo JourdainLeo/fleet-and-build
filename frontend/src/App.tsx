@@ -1,9 +1,22 @@
 import { AppShell, Burger, Button, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link, Outlet } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useApi } from "./services/api";
+import { useStore } from "./services/store";
 
 function App() {
   const [opened, { toggle }] = useDisclosure();
+  const api = useApi();
+  const store = useStore();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await api.get("/user/:id", { id: 1 });
+      store.setUser(user);
+    };
+    getUser().then();
+  }, []);
 
   return (
     <AppShell

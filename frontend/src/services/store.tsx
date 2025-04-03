@@ -1,4 +1,5 @@
-import React, { createContext, useContext } from "react";
+import type { User } from "@fleet-and-build/types";
+import React, { createContext, useContext, useState } from "react";
 import type { IStore } from "./model";
 
 export const Store = createContext<IStore>({} as IStore);
@@ -6,7 +7,8 @@ export const Store = createContext<IStore>({} as IStore);
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  return <Store.Provider value={{}}>{children}</Store.Provider>;
+  const [user, setUser] = useState<User>();
+  return <Store.Provider value={{ user, setUser }}>{children}</Store.Provider>;
 };
 
 export const useStore = () => {
