@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "packageManager": "yarn@4.8.1",
+  "dependencies": {
+    "@fastify/cors": "^11.0.1",
+    "@fastify/env": "^5.0.2",
+    "@fastify/sensible": "^6.0.3",
+    "drizzle-kit": "^0.30.6",
+    "drizzle-orm": "^0.41.0",
+    "fastify": "^5.2.2",
+    "pg": "^8.14.1",
+    "postgres": "^3.4.5"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "migrate": "drizzle-kit generate && drizzle-kit migrate",
+    "build": "tsc -p tsconfig.json && tsc-alias",
+    "start": "node ./dist/main.js",
+    "studio": "drizzle-kit studio"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/pg": "^8",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.19.3"
+  }
+}

@@ -1,3 +1,5 @@
+import { ApiProvider } from "@frontend/services/api";
+import { StoreProvider } from "@frontend/services/store";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { RouterProvider } from "@tanstack/react-router";
@@ -9,7 +11,11 @@ import router from "./routes/__root";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <MantineProvider defaultColorScheme={"dark"}>
-      <RouterProvider router={router} />
+      <ApiProvider>
+        <StoreProvider>
+          <RouterProvider router={router} />
+        </StoreProvider>
+      </ApiProvider>
     </MantineProvider>
   </StrictMode>,
 );

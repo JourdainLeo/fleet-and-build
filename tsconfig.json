@@ -5,9 +5,13 @@
     "moduleResolution": "bundler",
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "jsx": "react-jsx",
     "strict": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@backend/*": ["backend/src/*"],
+      "@frontend/*": ["frontend/src/*"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }
