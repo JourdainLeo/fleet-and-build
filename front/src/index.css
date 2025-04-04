@@ -1,27 +1,6 @@
-@font-face {
-  font-family: 'FaB-Text';
-  src: url('/fonts/fab-text.otf') format('opentype');
-}
-
-@font-face {
-  font-family: 'FaB-Title';
-  src: url('/fonts/fab-title.otf') format('opentype');
-}
-
-@font-face {
-  font-family: 'FaB-Copyright';
-  src: url('/fonts/fab-copyright.otf') format('opentype');
-}
-
 * {
   font-family: 'Cinzel', serif;
 }
-
-.bg {
-  background: url("/public/bg.jpg") ;
-  background-size: cover;
-}
-
 
 #root {
   width: 100vw;
@@ -66,7 +45,6 @@
 .fade-in {
   animation: fadeIn 0.5s ease-in-out;
 }
-
 
 .btn {
   position: relative;
