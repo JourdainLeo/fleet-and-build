@@ -1,3 +1,4 @@
+import type { Card } from "@fleet-and-build/api";
 import {
   Divider,
   Flex,
@@ -9,10 +10,10 @@ import {
   Skeleton,
   Text,
 } from "@mantine/core";
-
-import type { Card } from "@fleet-and-build/api";
 import { useDisclosure } from "@mantine/hooks";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { Action } from "../components/Action";
 import { useApi } from "../services/api";
 import { useStore } from "../services/store";
 import Filter from "./search/filter";
@@ -36,8 +37,7 @@ function Collection() {
   }, []);
 
   if (!store.user) return;
-
-  console.log(current?.text_html);
+  console.log(current);
   return (
     <Flex h={"100%"} direction={"column"} pb={16}>
       <Filter
@@ -82,9 +82,7 @@ function Collection() {
         onClose={close}
         title="Card information"
         centered
-        h={"100%"}
-        flex={1}
-        size={"xl"}
+        size={"70%"}
       >
         <Flex h={"100%"} flex={1}>
           <Skeleton visible={imageLoading} animate radius={16} h={500} w={358}>
@@ -99,17 +97,54 @@ function Collection() {
             />
           </Skeleton>
           <Divider orientation={"vertical"} m={16} />
-          <Flex flex={1} direction={"column"} gap={16}>
-            <Flex direction={"column"}>
-              <Text fw={600} fz={32}>
-                {current?.name}
-              </Text>
-              <Text>Quantity: {current?.quantity}</Text>
+          <Flex direction={"column"} justify={"space-between"}>
+            <Flex flex={1} direction={"column"} gap={16}>
+              <Flex direction={"column"}>
+                <Text fw={600} fz={32}>
+                  {current?.name}
+                </Text>
+                <Text mt={-8} fz={12}>
+                  Illustration: {current?.artists[0]}
+                </Text>
+              </Flex>
+              <MantineCard className={"card-text"}>
+                <Text
+                  dangerouslySetInnerHTML={{ __html: current?.text_html || "" }}
+                />
+              </MantineCard>
+              <Flex direction={"column"}>
+                <Text>Class: {current?.quantity}</Text>
+                <Text>Type: {current?.quantity}</Text>
+                <Text>Action: {current?.quantity}</Text>
+                <Text>Rarities: {current?.quantity}</Text>
+                <Text>Artist: {current?.quantity}</Text>
+                <Text>Set: {current?.quantity}</Text>
+              </Flex>
             </Flex>
-            <MantineCard className={"card-text"}>
-              <Text
-                dangerouslySetInnerHTML={{ __html: current?.text_html || "" }}
-              />
+            <MantineCard p={8}>
+              <Flex gap={32} align={"center"} justify={"center"}>
+                <Action
+                  icon={<IconMinus />}
+                  label={"Remove"}
+                  onClick={async ({ api }) => {
+                    if (!current) return;
+                    await api.put("/user/:id/collection", current, {
+                      id: 1,
+                    });
+                  }}
+                />
+                <Text fw={600}>{current?.quantity}</Text>
+                <Action
+                  icon={<IconPlus />}
+                  label={"Add"}
+                  onClick={async ({ api }) => {
+                    if (!current) return;
+                    await api.put("/user/:id/collection", current, {
+                      id: 1,
+                    });
+                  }}
+                />
+              </Flex>
             </MantineCard>
           </Flex>
         </Flex>

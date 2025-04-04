@@ -34,6 +34,14 @@ export const cardSchema = Type.Object({
   typebox: Type.String(),
   url: Type.String(),
   quantity: Type.Number(),
+  artists: Type.Array(Type.String()),
+  classes: Type.Array(Type.String()),
+  sets: Type.Array(Type.String()),
+  rarities: Type.Array(Type.String()),
+  types: Type.Array(Type.String()),
+  subtypes: Type.Array(Type.String()),
+  legalHeroes: Type.Array(Type.String()),
+  legalFormats: Type.Array(Type.String()),
 });
 
 export const userSchema = createSelectSchema(usersTable, {
