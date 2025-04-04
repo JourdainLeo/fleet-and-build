@@ -4,11 +4,14 @@ import type {
   PostApiRoutes,
   PutApiRoutes,
 } from "@fleet-and-build/api";
+import { notifications } from "@mantine/notifications";
 import React, { createContext, useContext } from "react";
+import { useStore } from "./store";
 
 const BASE_URL = "http://localhost:3000";
 
 export class IApi {
+  private store = useStore();
   async get<T extends keyof GetApiRoutes>(
     route: T,
     params: GetApiRoutes[T]["Params"],
@@ -53,7 +56,7 @@ export class IApi {
     route: T,
     body: PutApiRoutes[T]["Body"],
     params: PutApiRoutes[T]["Params"],
-  ): Promise<PutApiRoutes[T]["Reply"]> {
+  ): Promise<void> {
     const url = route.replace(/:(\w+)/g, (_, key) => {
       if (Object.prototype.hasOwnProperty.call(params, key)) {
         return encodeURIComponent(String(params[key as keyof typeof params]));
@@ -68,16 +71,27 @@ export class IApi {
     });
 
     if (!res.ok) {
-      throw new Error(`Error: ${res.status}`);
+      notifications.show({
+        message: "Error adding card: 404",
+        color: "red",
+        position: "bottom-right",
+      });
+      return;
     }
 
-    return res.json();
+    notifications.show({
+      message: "Card added!",
+      color: "green",
+      position: "bottom-right",
+    });
+
+    this.store.setUser(await res.json());
   }
 
   async delete<T extends keyof DeleteApiRoutes>(
     route: T,
     params: DeleteApiRoutes[T]["Params"],
-  ): Promise<DeleteApiRoutes[T]["Reply"]> {
+  ): Promise<void> {
     const url = route.replace(/:(\w+)/g, (_, key) => {
       if (Object.prototype.hasOwnProperty.call(params, key)) {
         return encodeURIComponent(String(params[key as keyof typeof params]));
@@ -90,10 +104,21 @@ export class IApi {
     });
 
     if (!res.ok) {
-      throw new Error(`Error: ${res.status}`);
+      notifications.show({
+        message: "Error removing card: 404",
+        color: "red",
+        position: "bottom-right",
+      });
+      return;
     }
 
-    return res.json();
+    notifications.show({
+      message: "Card removed!",
+      color: "green",
+      position: "bottom-right",
+    });
+
+    this.store.setUser(await res.json());
   }
 }
 

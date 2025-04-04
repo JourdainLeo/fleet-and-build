@@ -1,6 +1,14 @@
-import { AppShell, Burger, Button, Group, Text } from "@mantine/core";
+import {
+  AppShell,
+  Burger,
+  Flex,
+  Group,
+  Image,
+  Text,
+  UnstyledButton,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Link, Outlet } from "@tanstack/react-router";
+import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useApi } from "./services/api";
 import { useStore } from "./services/store";
@@ -9,6 +17,9 @@ function App() {
   const [opened, { toggle }] = useDisclosure();
   const api = useApi();
   const store = useStore();
+  const path = useRouterState({
+    select: (state) => state.location.pathname,
+  });
 
   useEffect(() => {
     const getUser = async () => {
@@ -20,72 +31,179 @@ function App() {
 
   return (
     <AppShell
-      header={{ height: 50 }}
       navbar={{
         width: 300,
         breakpoint: "sm",
         collapsed: { desktop: true, mobile: !opened },
       }}
       flex={1}
-      padding="md"
+      h={"100%"}
+      header={{
+        height: 75,
+      }}
+      footer={{
+        height: 32,
+      }}
     >
       <AppShell.Header>
-        <Group
-          h="100%"
-          px="md"
-          justify="space-between"
-          style={{ position: "relative" }}
-        >
-          <Group>
+        <Group justify="space-between" h={75}>
+          <Group pl={32}>
             <Burger
               opened={opened}
               onClick={toggle}
               hiddenFrom="sm"
               size="sm"
             />
-            <Text>Fleet and Build</Text>
+            <Image src={"/public/icon.png"} h={38} w={38}></Image>
+            <Text fw={600}>Fleet and Build</Text>
           </Group>
 
-          <Group
-            visibleFrom="sm"
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-          >
-            <Button component={Link} to="/" variant="subtle">
-              Home
-            </Button>
-            <Button component={Link} to="/search" variant="subtle">
-              Search
-            </Button>
-            <Button component={Link} to="/collection" variant="subtle">
-              Collection
-            </Button>
-            <Button component={Link} to="/decks" variant="subtle">
-              Decks
-            </Button>
+          <Group visibleFrom="sm" gap={0}>
+            <div
+              style={{
+                backgroundColor: "var(--mantine-color-dark-4)",
+                height: 75,
+                width: 1,
+              }}
+            />
+            <UnstyledButton
+              component={Link}
+              to="/"
+              variant="subtle"
+              className={"btn " + (path === "/" && " btn-selected")}
+            >
+              HOME
+            </UnstyledButton>
+            <div
+              style={{
+                backgroundColor: "var(--mantine-color-dark-4)",
+                height: 75,
+                width: 1,
+              }}
+            />
+            <UnstyledButton
+              component={Link}
+              to="/search"
+              variant="subtle"
+              className={"btn " + (path === "/search" && " btn-selected")}
+            >
+              SEARCH
+            </UnstyledButton>
+            <div
+              style={{
+                backgroundColor: "var(--mantine-color-dark-4)",
+                height: 75,
+                width: 1,
+              }}
+            />
+            <UnstyledButton
+              component={Link}
+              to="/collection"
+              variant="subtle"
+              className={"btn " + (path === "/collection" && " btn-selected")}
+            >
+              COLLECTION
+            </UnstyledButton>
+            <div
+              style={{
+                backgroundColor: "var(--mantine-color-dark-4)",
+                height: 75,
+                width: 1,
+              }}
+            />
+            <UnstyledButton
+              component={Link}
+              to="/decks"
+              variant="subtle"
+              className={"btn " + (path === "/decks" && " btn-selected")}
+            >
+              DECKS
+            </UnstyledButton>
+            <div
+              style={{
+                backgroundColor: "var(--mantine-color-dark-4)",
+                height: 75,
+                width: 1,
+              }}
+            />
           </Group>
         </Group>
       </AppShell.Header>
 
-      <AppShell.Navbar py="md" px={4}>
-        <Button component={Link} to="/" variant="subtle">
-          Home
-        </Button>
-        <Button component={Link} to="/search" variant="subtle">
-          Search
-        </Button>
-        <Button component={Link} to="/collection" variant="subtle">
-          Collection
-        </Button>
-        <Button component={Link} to="/decks" variant="subtle">
-          Decks
-        </Button>
+      <AppShell.Footer>
+        <Flex justify={"center"} align={"center"} h={"100%"}>
+          <Text fz={12}>
+            Created by Léo Jourdain - A non-profit fan project. © Legends
+            Studio.
+          </Text>
+        </Flex>
+      </AppShell.Footer>
+      <AppShell.Navbar py="md">
+        <div
+          style={{
+            backgroundColor: "var(--mantine-color-dark-4)",
+            height: 1,
+          }}
+        />
+        <UnstyledButton
+          component={Link}
+          to="/"
+          variant="subtle"
+          className={"btn " + (path === "/" && " btn-selected")}
+        >
+          HOME
+        </UnstyledButton>
+        <div
+          style={{
+            backgroundColor: "var(--mantine-color-dark-4)",
+            height: 1,
+          }}
+        />
+        <UnstyledButton
+          component={Link}
+          to="/search"
+          variant="subtle"
+          className={"btn " + (path === "/search" && " btn-selected")}
+        >
+          SEARCH
+        </UnstyledButton>
+        <div
+          style={{
+            backgroundColor: "var(--mantine-color-dark-4)",
+            height: 1,
+          }}
+        />
+        <UnstyledButton
+          component={Link}
+          to="/collection"
+          variant="subtle"
+          className={"btn " + (path === "/collection" && " btn-selected")}
+        >
+          COLLECTION
+        </UnstyledButton>
+        <div
+          style={{
+            backgroundColor: "var(--mantine-color-dark-4)",
+            height: 1,
+          }}
+        />
+        <UnstyledButton
+          component={Link}
+          to="/decks"
+          variant="subtle"
+          className={"btn " + (path === "/decks" && " btn-selected")}
+        >
+          DECKS
+        </UnstyledButton>
+        <div
+          style={{
+            backgroundColor: "var(--mantine-color-dark-4)",
+            height: 1,
+          }}
+        />
       </AppShell.Navbar>
 
-      <AppShell.Main flex={1}>
+      <AppShell.Main flex={1} h={"100%"}>
         <Outlet />
       </AppShell.Main>
     </AppShell>

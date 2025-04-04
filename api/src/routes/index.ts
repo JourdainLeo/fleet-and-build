@@ -134,6 +134,8 @@ export async function userRoutes(fastify: FastifyInstance) {
         if (collection[cardIndex].quantity === 0) {
           collection.splice(cardIndex, 1);
         }
+      } else {
+        return reply.status(404).send();
       }
 
       const [updated] = await db

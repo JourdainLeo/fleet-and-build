@@ -32,11 +32,11 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <MantineProvider defaultColorScheme={"dark"} theme={theme}>
       <Notifications />
-      <ApiProvider>
-        <StoreProvider>
+      <StoreProvider>
+        <ApiProvider>
           <RouterProvider router={router} />
-        </StoreProvider>
-      </ApiProvider>
+        </ApiProvider>
+      </StoreProvider>
     </MantineProvider>
   </StrictMode>,
 );
