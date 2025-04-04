@@ -95,3 +95,18 @@
   );
   border-bottom: 1px solid white;
 }
+
+.collection-card {
+  transition: all 0.2s ease;
+}
+
+.collection-card:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.card-text img {
+  width: 16px;
+  height: 16px;
+  object-fit: cover;
+}

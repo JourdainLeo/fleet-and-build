@@ -10,6 +10,7 @@ function Search() {
   const store = useStore();
 
   useEffect(() => {
+    store.setLoading(true);
     store
       .fetchCards(
         "https://cards.fabtcg.com/api/search/v1/cards/?limit=50&offset=0",
