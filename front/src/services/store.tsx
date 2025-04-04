@@ -10,7 +10,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User>();
   const baseUrl = "https://cards.fabtcg.com/api/search/v1/cards/";
   const [cards, setCards] = useState<Card[]>([]);
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(50);
   const [loading, setLoading] = useState(true);
   const [grid, setGrid] = useState({
     lg: 1.714,

@@ -5,7 +5,7 @@ import { Action } from "../../components/Action";
 import { useStore } from "../../services/store";
 import LoadingCards from "./loading-cards";
 
-function GridCards() {
+function GridCards({ cards }: { cards: Card[] }) {
   const store = useStore();
 
   const getQuantity = (card: Card) => {
@@ -20,11 +20,14 @@ function GridCards() {
     }
   };
 
+  console.log(cards);
+  console.log(store.loading);
+
   return (
     <ScrollArea h={"100%"} mr={32} ml={32}>
       <Grid gutter={16} align={"stretch"} p={16}>
         {!store.loading ? (
-          store.cards.map((item) => (
+          cards.map((item) => (
             <Grid.Col
               key={item.card_id}
               span={store.grid}

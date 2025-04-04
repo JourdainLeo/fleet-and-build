@@ -73,12 +73,16 @@
   );
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
-  pointer-events: none; /* Pour que ça n’interfère pas avec les clics */
+  pointer-events: none;
 }
 
 .btn:hover::after {
   opacity: 1;
   border-bottom: 1px solid white;
+}
+
+.btn:hover {
+  cursor: pointer;
 }
 
 .btn-selected {

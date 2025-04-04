@@ -9,20 +9,15 @@ import { IconSquare } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useStore } from "../../services/store";
 
-function Filter() {
+function Filter({ fetch }: { fetch: (debounced: string) => void }) {
   const [query, setQuery] = useState("");
   const [debounced] = useDebouncedValue(query, 200);
   const store = useStore();
 
   useEffect(() => {
     store.setLoading(true);
-    store
-      .fetchCards(
-        "https://cards.fabtcg.com/api/search/v1/cards/?q=" + debounced,
-      )
-      .then(() => {
-        store.setLoading(false);
-      });
+
+    fetch(debounced);
   }, [debounced]);
 
   return (

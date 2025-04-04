@@ -21,8 +21,18 @@ function Search() {
 
   return (
     <Flex h={"100%"} direction={"column"} pb={16}>
-      <Filter />
-      <GridCards />
+      <Filter
+        fetch={(debounced) => {
+          store
+            .fetchCards(
+              "https://cards.fabtcg.com/api/search/v1/cards/?q=" + debounced,
+            )
+            .then(() => {
+              store.setLoading(false);
+            });
+        }}
+      />
+      <GridCards cards={store.cards} />
       <Pagination />
     </Flex>
   );
