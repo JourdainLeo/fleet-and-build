@@ -1,4 +1,5 @@
 import type {
+  DeleteApiRoutes,
   GetApiRoutes,
   PostApiRoutes,
   PutApiRoutes,
@@ -64,6 +65,28 @@ export class IApi {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error: ${res.status}`);
+    }
+
+    return res.json();
+  }
+
+  async delete<T extends keyof DeleteApiRoutes>(
+    route: T,
+    params: DeleteApiRoutes[T]["Params"],
+  ): Promise<DeleteApiRoutes[T]["Reply"]> {
+    const url = route.replace(/:(\w+)/g, (_, key) => {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        return encodeURIComponent(String(params[key as keyof typeof params]));
+      }
+      throw new Error(`Missing parameter: ${key}`);
+    });
+
+    const res = await fetch(`${BASE_URL}${url}`, {
+      method: "DELETE",
     });
 
     if (!res.ok) {

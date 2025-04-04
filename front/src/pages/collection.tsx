@@ -19,6 +19,7 @@ function Collection() {
   const [cards, setCards] = useState<Card[]>([]);
   const store = useStore();
   const api = useApi();
+
   useEffect(() => {
     const fetchCards = async () => {
       const response = await api.get("/user/:id", { id: 1 });
@@ -26,7 +27,7 @@ function Collection() {
       setCards(response.collection);
     };
 
-    fetchCards();
+    fetchCards().then();
   }, []);
 
   return (

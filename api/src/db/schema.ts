@@ -1,4 +1,3 @@
-import type { Static } from "@sinclair/typebox";
 import { Type } from "@sinclair/typebox";
 import { jsonb, pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-typebox";
@@ -40,5 +39,3 @@ export const cardSchema = Type.Object({
 export const userSchema = createSelectSchema(usersTable, {
   collection: Type.Array(cardSchema),
 });
-
-export type User = Static<typeof userSchema>;

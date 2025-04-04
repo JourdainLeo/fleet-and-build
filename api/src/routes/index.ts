@@ -98,7 +98,11 @@ export async function userRoutes(fastify: FastifyInstance) {
 
       const [updated] = await db
         .update(usersTable)
-        .set({ collection: JSON.stringify(collection) })
+        .set({
+          collection: JSON.stringify(
+            collection.sort((a, b) => a.card_id.localeCompare(b.card_id)),
+          ),
+        })
         .where(eq(usersTable.id, id))
         .returning();
 
@@ -110,7 +114,7 @@ export async function userRoutes(fastify: FastifyInstance) {
     },
   );
 
-  fastify.put<DeleteApiRoutes["/user/:id/collection/:card_id"]>(
+  fastify.delete<DeleteApiRoutes["/user/:id/collection/:card_id"]>(
     "/user/:id/collection/:card_id",
     async (request, reply) => {
       const { id, card_id } = request.params;

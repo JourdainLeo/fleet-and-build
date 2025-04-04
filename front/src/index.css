@@ -45,3 +45,16 @@
 .card:hover .hover-bar {
   transform: translateY(0);
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
