@@ -12,12 +12,10 @@ function Collection() {
   const api = useApi();
 
   useEffect(() => {
-    const get = async () => {
-      const res = await api.get("/user/:id", { id: 1 });
-      store.setUser(res);
-    };
-
-    get().then(() => {
+    store.setLoading(true);
+    api.get("/user/:id/collection", { id: 1 }).then((r) => {
+      store.setCount(r.count);
+      store.setCards(r.results);
       store.setLoading(false);
     });
   }, []);
@@ -28,11 +26,17 @@ function Collection() {
     <Flex h={"100%"} direction={"column"} pb={16}>
       <Filter
         fetch={(debounced) => {
-          store.setLoading(false);
-          store.setCount(50);
+          store.setLoading(true);
+          api
+            .get("/user/:id/collection", { id: 1 }, { q: debounced })
+            .then((r) => {
+              store.setCount(r.count);
+              store.setCards(r.results);
+              store.setLoading(false);
+            });
         }}
       />
-      <GridCards cards={store.user.collection} />
+      <GridCards />
       <Pagination />
     </Flex>
   );

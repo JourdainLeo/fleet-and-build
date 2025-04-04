@@ -114,6 +114,43 @@ export async function userRoutes(fastify: FastifyInstance) {
     },
   );
 
+  fastify.get<GetApiRoutes["/user/:id/collection"]>(
+    "/user/:id/collection",
+    async (request, reply) => {
+      const { id } = request.params;
+      const {
+        limit = 50,
+        offset = 0,
+        q = "",
+      } = request.query as GetApiRoutes["/user/:id/collection"]["Query"];
+
+      const [user] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.id, id));
+
+      if (!user) {
+        return reply.status(404).send();
+      }
+
+      const collection = user.collection as Card[];
+
+      const filteredCollection = collection.filter((card) =>
+        card.card_id.includes(q.toLowerCase()),
+      );
+
+      const paginatedCollection = filteredCollection.slice(
+        offset,
+        offset + limit,
+      );
+
+      return reply.send({
+        count: collection.length,
+        results: paginatedCollection,
+      });
+    },
+  );
+
   fastify.delete<DeleteApiRoutes["/user/:id/collection/:card_id"]>(
     "/user/:id/collection/:card_id",
     async (request, reply) => {

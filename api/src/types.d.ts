@@ -21,6 +21,16 @@ export interface GetApiRoutes {
   "/user/:id": {
     Params: { id: number };
     Reply: User;
+    Query: null;
+  };
+  "/user/:id/collection": {
+    Params: { id: number };
+    Reply: { count: number; results: Card[] };
+    Query: {
+      limit?: number;
+      offset?: number;
+      q?: string;
+    };
   };
 }
 

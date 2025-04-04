@@ -32,7 +32,7 @@ function Search() {
             });
         }}
       />
-      <GridCards cards={store.cards} />
+      <GridCards />
       <Pagination />
     </Flex>
   );

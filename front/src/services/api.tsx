@@ -12,18 +12,31 @@ const BASE_URL = "http://localhost:3000";
 
 export class IApi {
   private store = useStore();
+
   async get<T extends keyof GetApiRoutes>(
     route: T,
     params: GetApiRoutes[T]["Params"],
+    query?: GetApiRoutes[T]["Query"],
   ): Promise<GetApiRoutes[T]["Reply"]> {
-    const url = route.replace(/:(\w+)/g, (_, key) => {
+    const urlPath = route.replace(/:(\w+)/g, (_, key) => {
       if (Object.prototype.hasOwnProperty.call(params, key)) {
         return encodeURIComponent(String(params[key as keyof typeof params]));
       }
       throw new Error(`Missing parameter: ${key}`);
     });
 
-    const res = await fetch(`${BASE_URL}${url}`, {
+    const queryString = query
+      ? "?" +
+        Object.entries(query)
+          .filter(([, value]) => value !== undefined)
+          .map(
+            ([key, value]) =>
+              `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+          )
+          .join("&")
+      : "";
+
+    const res = await fetch(`${BASE_URL}${urlPath}${queryString}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
