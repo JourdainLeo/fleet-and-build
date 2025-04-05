@@ -11,20 +11,21 @@ import { useDisclosure } from "@mantine/hooks";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useApi } from "./services/api";
-import { useStore } from "./services/store";
+import { useZustore } from "./services/zustore";
 
 function App() {
   const [opened, { toggle }] = useDisclosure();
   const api = useApi();
-  const store = useStore();
   const path = useRouterState({
     select: (state) => state.location.pathname,
   });
 
+  const setUser = useZustore((state) => state.setUser);
+
   useEffect(() => {
     const getUser = async () => {
       const user = await api.get("/user/:id", { id: 1 });
-      store.setUser(user);
+      setUser(user);
     };
     getUser().then();
   }, []);

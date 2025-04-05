@@ -110,3 +110,7 @@
   height: 16px;
   object-fit: cover;
 }
+
+.card-container {
+  transition: all 0.2s ease;
+}

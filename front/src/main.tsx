@@ -8,35 +8,69 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import router from "./routes/__root";
 import { ApiProvider } from "./services/api";
-import { StoreProvider } from "./services/store";
 
 const theme = createTheme({
   colors: {
     customRed: [
-      "#ffe5e5", // 0
-      "#ffb3b3", // 1
-      "#ff8080", // 2
-      "#ff4d4d", // 3
-      "#ff1a1a", // 4
-      "#e60000", // 5
-      "#cc0000", // 6
-      "#b30000", // 7
-      "#990000", // 8
-      "#6f0000", // 9 (darkest shade, your hex)
+      "#ffe5e5",
+      "#ffb3b3",
+      "#ff8080",
+      "#ff4d4d",
+      "#ff1a1a",
+      "#e60000",
+      "#cc0000",
+      "#b30000",
+      "#990000",
+      "#6f0000",
     ],
   },
-  primaryColor: "customRed", // Use the custom color scale
+  primaryColor: "customRed",
+  components: {
+    ActionIcon: {
+      styles: () => ({
+        root: {
+          borderRadius: "16px",
+        },
+      }),
+    },
+    Button: {
+      styles: () => ({
+        root: {
+          borderRadius: "16px",
+        },
+      }),
+    },
+    Skeleton: {
+      styles: () => ({
+        root: {
+          borderRadius: "16px",
+        },
+      }),
+    },
+    Card: {
+      styles: () => ({
+        root: {
+          borderRadius: "16px",
+        },
+      }),
+    },
+    Modal: {
+      styles: () => ({
+        root: {
+          borderRadius: "16px",
+        },
+      }),
+    },
+  },
 });
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <MantineProvider defaultColorScheme={"dark"} theme={theme}>
       <Notifications />
-      <StoreProvider>
-        <ApiProvider>
-          <RouterProvider router={router} />
-        </ApiProvider>
-      </StoreProvider>
+      <ApiProvider>
+        <RouterProvider router={router} />
+      </ApiProvider>
     </MantineProvider>
   </StrictMode>,
 );

@@ -1,14 +1,15 @@
 import { Flex, Grid, Image, Skeleton } from "@mantine/core";
-import { useStore } from "../../services/store";
+import { useZustore } from "../../services/zustore";
 
 function LoadingCards() {
-  const store = useStore();
+  const grid = useZustore((state) => state.grid);
+  const loading = useZustore((state) => state.loading);
 
   return Array.from({ length: 50 }).map((_, index) => {
     return (
-      <Grid.Col key={index} span={store.grid} className="card-container">
+      <Grid.Col key={index} span={grid} className="card-container">
         <Flex className="card">
-          <Skeleton visible={store.loading} animate radius={16}>
+          <Skeleton visible={loading} animate>
             <Image
               fit="contain"
               className="card-image fade-in"

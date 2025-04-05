@@ -1,22 +1,24 @@
 import { Flex } from "@mantine/core";
-
 import { useEffect } from "react";
 import { useApi } from "../services/api";
-import { useStore } from "../services/store";
+import { useZustore } from "../services/zustore";
 import Filter from "./search/filter";
 import GridCards from "./search/grid-cards";
 import Pagination from "./search/pagination";
 
 function Search() {
-  const store = useStore();
   const api = useApi();
+  const setLoading = useZustore((state) => state.setLoading);
+  const setCount = useZustore((state) => state.setCount);
+  const setCards = useZustore((state) => state.setCards);
+  const q = useZustore((state) => state.q);
 
   useEffect(() => {
-    store.setLoading(true);
+    setLoading(true);
     api.get("/cards", { id: 1 }).then((r) => {
-      store.setCount(r.count);
-      store.setCards(r.results);
-      store.setLoading(false);
+      setCount(r.count);
+      setCards(r.results);
+      setLoading(false);
     });
   }, []);
 
@@ -25,9 +27,9 @@ function Search() {
       <Filter
         fetch={(debounced) => {
           api.get("/cards", { id: 1 }, { q: debounced }).then((r) => {
-            store.setCount(r.count);
-            store.setCards(r.results);
-            store.setLoading(false);
+            setCount(r.count);
+            setCards(r.results);
+            setLoading(false);
           });
         }}
       />
@@ -41,13 +43,13 @@ function Search() {
               {
                 limit: 50,
                 offset: offset,
-                q: store.debounced,
+                q: q,
               },
             )
             .then((r) => {
-              store.setCount(r.count);
-              store.setLoading(false);
-              store.setCards(r.results);
+              setCount(r.count);
+              setLoading(false);
+              setCards(r.results);
             });
         }}
       />

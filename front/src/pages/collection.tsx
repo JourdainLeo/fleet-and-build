@@ -16,30 +16,34 @@ import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Action } from "../components/Action";
 import { useApi } from "../services/api";
-import { useStore } from "../services/store";
+import { useZustore } from "../services/zustore";
 import Filter from "./search/filter";
 import LoadingCards from "./search/loading-cards";
 import Pagination from "./search/pagination";
 
 function Collection() {
-  const store = useStore();
   const api = useApi();
   const [opened, { open, close }] = useDisclosure(false);
   const [current, setCurrent] = useState<CollectionCard>();
   const [imageLoading, setImageLoading] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTablet = useMediaQuery("(max-width: 1040px)");
+  const setLoading = useZustore((state) => state.setLoading);
+  const setCollection = useZustore((state) => state.setCollection);
+  const setCount = useZustore((state) => state.setCount);
+  const grid = useZustore((state) => state.grid);
+  const collection = useZustore((state) => state.collection);
+  const loading = useZustore((state) => state.loading);
+  const q = useZustore((state) => state.q);
 
   useEffect(() => {
-    store.setLoading(true);
+    setLoading(true);
     api.get("/user/:id/collection", { id: 1 }).then((r) => {
-      store.setCount(r.count);
-      store.setCollection(r.results);
-      store.setLoading(false);
+      setCount(r.count);
+      setCollection(r.results);
+      setLoading(false);
     });
   }, []);
-
-  if (!store.user) return;
 
   return (
     <Flex h={"100%"} direction={"column"} pb={16}>
@@ -48,20 +52,20 @@ function Collection() {
           api
             .get("/user/:id/collection", { id: 1 }, { q: debounced })
             .then((r) => {
-              store.setCount(r.count);
-              store.setCollection(r.results);
-              store.setLoading(false);
+              setCount(r.count);
+              setCollection(r.results);
+              setLoading(false);
             });
         }}
       />
 
       <ScrollArea h={"100%"} mr={32} ml={32}>
         <Grid gutter={16} align={"stretch"} p={16}>
-          {!store.loading ? (
-            store.collection.map((item) => (
+          {!loading ? (
+            collection.map((item) => (
               <Grid.Col
                 key={item.card_id}
-                span={store.grid}
+                span={grid}
                 className={"collection-card"}
                 onClick={() => {
                   open();
@@ -89,13 +93,13 @@ function Collection() {
               {
                 limit: 50,
                 offset: offset,
-                q: store.debounced,
+                q: q,
               },
             )
             .then((r) => {
-              store.setCount(r.count);
-              store.setLoading(false);
-              store.setCollection(r.results);
+              setCount(r.count);
+              setLoading(false);
+              setCollection(r.results);
             });
         }}
       />
@@ -106,7 +110,6 @@ function Collection() {
         title="Card information"
         centered
         size={isMobile ? "100%" : isTablet ? "100%" : "80%"}
-        radius={16}
       >
         <Flex
           h={!isMobile || !isTablet ? "70vh" : "75vh"}
@@ -117,7 +120,6 @@ function Collection() {
             <Skeleton
               visible={imageLoading}
               animate
-              radius={16}
               h={isMobile ? 307 : isTablet ? 391 : 500}
               w={isMobile ? 220 : isTablet ? 220 : 358}
             >
@@ -151,7 +153,7 @@ function Collection() {
                 </Text>
               </Flex>
               {current?.other.text_html && (
-                <MantineCard className={"card-text"} radius={16}>
+                <MantineCard className={"card-text"}>
                   <Text
                     dangerouslySetInnerHTML={{
                       __html: current?.other.text_html || "",
@@ -222,7 +224,7 @@ function Collection() {
                 </Flex>
               </Flex>
             </Flex>
-            <MantineCard p={8} radius={16}>
+            <MantineCard p={8}>
               <Flex gap={32} align={"center"} justify={"center"}>
                 <Action
                   icon={<IconMinus />}
@@ -236,7 +238,7 @@ function Collection() {
                         card_id: current.card_id,
                       },
                       (json) => {
-                        store.setCollection(json);
+                        setCollection(json);
                         const c = json.find(
                           (c) => c.card_id === current.card_id,
                         );
@@ -263,7 +265,7 @@ function Collection() {
                         id: 1,
                       },
                       (json) => {
-                        store.setCollection(json);
+                        setCollection(json);
                         setCurrent(
                           json.find((c) => c.card_id === current.card_id),
                         );

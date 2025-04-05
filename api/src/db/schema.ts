@@ -1,7 +1,15 @@
+import {
+  Type as CardType,
+  Class,
+  Format,
+  Hero,
+  Rarity,
+  Release,
+  Subtype,
+} from "@flesh-and-blood/types";
 import { Type } from "@sinclair/typebox";
 import { createSelectSchema } from "drizzle-typebox";
 import { cardsTable, usersTable } from "./table";
-
 export const UserCollectionSchema = Type.Array(
   Type.Object({
     card_id: Type.String(),
@@ -39,4 +47,11 @@ export const cardSchema = createSelectSchema(cardsTable, {
 export const collectionCardSchema = Type.Object({
   ...cardSchema.properties,
   quantity: Type.Integer(),
+  rarities: Type.Array(Type.Enum(Rarity)),
+  classes: Type.Array(Type.Enum(Class)),
+  sets: Type.Array(Type.Enum(Release)),
+  type: Type.Array(Type.Enum(CardType)),
+  subtype: Type.Array(Type.Enum(Subtype)),
+  legalHeroes: Type.Array(Type.Enum(Hero)),
+  legalFormats: Type.Array(Type.Enum(Format)),
 });

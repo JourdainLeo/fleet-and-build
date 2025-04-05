@@ -3,8 +3,26 @@ import type React from "react";
 import type { IApi } from "./api";
 
 export interface IServices {
-  store: IStore;
   api: IApi;
+}
+
+export interface Filters {
+  limit?: number;
+  offset?: number;
+  hero?: string;
+  set?: string;
+  type?: string;
+  rarity?: string;
+  fusion?: string;
+  artist?: string;
+  pitch?: number;
+  pitch_operator?: string;
+  defense?: number;
+  defense_operator?: string;
+  attack?: number;
+  attack_operator?: string;
+  cost?: number;
+  cost_operator?: string;
 }
 
 export interface IStore {
@@ -18,8 +36,10 @@ export interface IStore {
   setCount: React.Dispatch<React.SetStateAction<number>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  query: string;
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
+  q: string;
+  setQ: React.Dispatch<React.SetStateAction<string>>;
+  filters: Filters;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   grid: { lg: number; sm: number; xs: number; md: number };
   setGrid: React.Dispatch<
     React.SetStateAction<{ lg: number; sm: number; xs: number; md: number }>

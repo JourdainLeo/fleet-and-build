@@ -1,10 +1,11 @@
 import { Card, Flex, Pagination as MantinePagination } from "@mantine/core";
 import { useState } from "react";
-import { useStore } from "../../services/store";
+import { useZustore } from "../../services/zustore";
 
 function Pagination({ onChange }: { onChange?: (offset: number) => void }) {
-  const store = useStore();
   const [activePage, setPage] = useState(1);
+  const count = useZustore((state) => state.count);
+  const setLoading = useZustore((state) => state.setLoading);
 
   const getOffset = (page: number, totalPages: number, limit: number = 50) => {
     const safePage = Math.min(Math.max(1, page), totalPages);
@@ -13,14 +14,14 @@ function Pagination({ onChange }: { onChange?: (offset: number) => void }) {
 
   return (
     <Flex justify={"center"} align={"center"} mt={16}>
-      <Card style={{ borderRadius: 16, padding: 8 }}>
+      <Card style={{ padding: 8 }}>
         <MantinePagination
-          total={store.count / 50}
+          total={count / 50}
           value={activePage}
           onChange={async (value) => {
-            store.setLoading(true);
+            setLoading(true);
             setPage(value);
-            if (onChange) onChange(getOffset(value, store.count / 50));
+            if (onChange) onChange(getOffset(value, count / 50));
           }}
           withEdges
           size="md"

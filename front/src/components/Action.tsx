@@ -9,7 +9,6 @@ import { ActionIcon, Button } from "@mantine/core";
 import React from "react";
 import { useApi } from "../services/api";
 import type { IServices } from "../services/model";
-import { useStore } from "../services/store";
 
 interface IAction {
   className?: string;
@@ -31,13 +30,12 @@ interface IAction {
 
 export const Action = (props: IAction) => {
   const api = useApi();
-  const store = useStore();
 
   const p = {
     ...props,
     onClick: () => {
       if (props.onClick) {
-        props.onClick({ api, store });
+        props.onClick({ api });
       }
     },
     className:
@@ -51,13 +49,9 @@ export const Action = (props: IAction) => {
   return (
     <>
       {props.label ? (
-        <Button radius={16} {...p}>
-          {props.label}
-        </Button>
+        <Button {...p}>{props.label}</Button>
       ) : (
-        <ActionIcon radius={16} {...p}>
-          {props.icon}
-        </ActionIcon>
+        <ActionIcon {...p}>{props.icon}</ActionIcon>
       )}
     </>
   );
