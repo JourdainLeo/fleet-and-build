@@ -37,7 +37,7 @@ function Collection() {
   }, []);
 
   if (!store.user) return;
-  console.log(current);
+
   return (
     <Flex h={"100%"} direction={"column"} pb={16}>
       <Filter
@@ -85,17 +85,25 @@ function Collection() {
         size={"70%"}
       >
         <Flex h={"100%"} flex={1}>
-          <Skeleton visible={imageLoading} animate radius={16} h={500} w={358}>
-            <Image
+          <Flex align={"center"}>
+            <Skeleton
+              visible={imageLoading}
+              animate
+              radius={16}
               h={500}
-              src={current?.image.large}
-              fit="contain"
-              onLoad={() => {
-                setImageLoading(false);
-              }}
-              loading={"lazy"}
-            />
-          </Skeleton>
+              w={358}
+            >
+              <Image
+                h={500}
+                src={current?.image.large}
+                fit="contain"
+                onLoad={() => {
+                  setImageLoading(false);
+                }}
+                loading={"lazy"}
+              />
+            </Skeleton>
+          </Flex>
           <Divider orientation={"vertical"} m={16} />
           <Flex direction={"column"} justify={"space-between"}>
             <Flex flex={1} direction={"column"} gap={16}>
@@ -104,14 +112,18 @@ function Collection() {
                   {current?.name}
                 </Text>
                 <Text mt={-8} fz={12}>
-                  Illustration: {current?.artists[0]}
+                  Illustration: {current?.artists ? current.artists[0] : "None"}
                 </Text>
               </Flex>
-              <MantineCard className={"card-text"}>
-                <Text
-                  dangerouslySetInnerHTML={{ __html: current?.text_html || "" }}
-                />
-              </MantineCard>
+              {current?.text_html && (
+                <MantineCard className={"card-text"}>
+                  <Text
+                    dangerouslySetInnerHTML={{
+                      __html: current?.text_html || "",
+                    }}
+                  />
+                </MantineCard>
+              )}
               <Flex direction={"column"}>
                 <Text>Class: {current?.quantity}</Text>
                 <Text>Type: {current?.quantity}</Text>
@@ -128,9 +140,26 @@ function Collection() {
                   label={"Remove"}
                   onClick={async ({ api }) => {
                     if (!current) return;
-                    await api.put("/user/:id/collection", current, {
-                      id: 1,
-                    });
+                    await api.delete(
+                      "/user/:id/collection/:card_id",
+                      {
+                        id: 1,
+                        card_id: current.card_id,
+                      },
+                      (json) => {
+                        store.setUser(json);
+                        store.setCards(json.collection);
+                        const c = json.collection.find(
+                          (c) => c.card_id === current.card_id,
+                        );
+
+                        if (!c) {
+                          close();
+                        } else {
+                          setCurrent(c);
+                        }
+                      },
+                    );
                   }}
                 />
                 <Text fw={600}>{current?.quantity}</Text>
@@ -139,9 +168,22 @@ function Collection() {
                   label={"Add"}
                   onClick={async ({ api }) => {
                     if (!current) return;
-                    await api.put("/user/:id/collection", current, {
-                      id: 1,
-                    });
+                    await api.put(
+                      "/user/:id/collection",
+                      current,
+                      {
+                        id: 1,
+                      },
+                      (json) => {
+                        store.setUser(json);
+                        store.setCards(json.collection);
+                        setCurrent(
+                          json.collection.find(
+                            (c) => c.card_id === current.card_id,
+                          ),
+                        );
+                      },
+                    );
                   }}
                 />
               </Flex>

@@ -10,19 +10,30 @@ import LoadingCards from "./loading-cards";
 function GridCards() {
   const store = useStore();
   const engine = new Engine(cards);
-  const getQuantity = (card: Card) => {
-    const userCollec = store.user?.collection;
-    const quantity = userCollec?.find(
-      (item) => item.card_id === card.card_id,
-    )?.quantity;
-    if (quantity) {
-      return quantity;
-    } else {
-      return 0;
-    }
-  };
 
-  console.log(cards);
+  const SearchEngine = (item: Card): Card => {
+    const card_id = item.card_id
+      .replace("-1", "-red")
+      .replace("-2", "-yellow")
+      .replace("-3", "-blue");
+    const res = cards.find((c) => card_id.includes(c.cardIdentifier));
+    console.log(card_id);
+    console.log(res);
+    console.log(cards);
+    if (res) {
+      item["artists"] = res.artists;
+      item["classes"] = res.classes;
+      item["sets"] = res.sets;
+      item["rarities"] = res.rarities;
+      item["types"] = res.types;
+      item["subtypes"] = res.subtypes;
+      item["legalHeroes"] = res.legalHeroes;
+      item["legalFormats"] = res.legalFormats;
+      return item;
+    }
+
+    return item;
+  };
 
   return (
     <ScrollArea h={"100%"} mr={32} ml={32}>
@@ -44,60 +55,55 @@ function GridCards() {
 
                 <Flex className="hover-bar" gap={16}>
                   <Action
-                    disabled={getQuantity(item) < 1}
+                    disabled={
+                      !store.user?.collection.find(
+                        (c) => c.card_id === item.card_id,
+                      )?.quantity
+                    }
                     className="card-button"
                     icon={<IconMinus />}
                     onClick={async ({ api }) => {
-                      await api.delete("/user/:id/collection/:card_id", {
-                        id: 1,
-                        card_id: item.card_id,
-                      });
+                      await api.delete(
+                        "/user/:id/collection/:card_id",
+                        {
+                          id: 1,
+                          card_id: item.card_id,
+                        },
+                        (json) => {
+                          store.setUser(json);
+                        },
+                      );
                     }}
                   />
                   <Text fw={900} size={"20"}>
-                    {getQuantity(item).toString()}
+                    {store.user?.collection
+                      .find((c) => c.card_id === item.card_id)
+                      ?.quantity.toString() || "0"}
                   </Text>
                   <Action
                     className="card-button"
                     icon={<IconPlus />}
                     onClick={async ({ api }) => {
-                      const id = item.card_id
-                        .replace("-1", "")
-                        .replace("-2", "")
-                        .replace("-3", " ");
-
-                      const res = engine.search(id);
-
                       const copy = { ...item };
 
-                      const color =
-                        item.pitch === "1"
-                          ? "-red"
-                          : item.pitch === "2"
-                            ? "-yellow"
-                            : "-blue";
-
-                      // find item in res.searchResults with the keyCar
-                      const item2 = res.searchResults.find(
-                        (c) => c.cardIdentifier === id + color,
-                      );
+                      const item2 = SearchEngine(item);
 
                       if (!item2) {
                         return;
                       }
 
-                      copy["artists"] = item2.artists;
-                      copy["classes"] = item2.classes;
-                      copy["sets"] = item2.sets;
-                      copy["rarities"] = item2.rarities;
-                      copy["types"] = item2.types;
-                      copy["subtypes"] = item2.subtypes;
-                      copy["legalHeroes"] = item2.legalHeroes;
-                      copy["legalFormats"] = item2.legalFormats;
+                      console.log(item2);
 
-                      await api.put("/user/:id/collection", copy, {
-                        id: 1,
-                      });
+                      await api.put(
+                        "/user/:id/collection",
+                        copy,
+                        {
+                          id: 1,
+                        },
+                        (json) => {
+                          store.setUser(json);
+                        },
+                      );
                     }}
                   />
                 </Flex>
