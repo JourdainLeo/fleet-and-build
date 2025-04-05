@@ -1,6 +1,3 @@
-import type { Card } from "@fleet-and-build/api";
-import { cards } from "@flesh-and-blood/cards";
-import Engine from "@flesh-and-blood/search";
 import { Flex, Grid, Image, ScrollArea, Text } from "@mantine/core";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { Action } from "../../components/Action";
@@ -9,31 +6,6 @@ import LoadingCards from "./loading-cards";
 
 function GridCards() {
   const store = useStore();
-  const engine = new Engine(cards);
-
-  const SearchEngine = (item: Card): Card => {
-    const card_id = item.card_id
-      .replace("-1", "-red")
-      .replace("-2", "-yellow")
-      .replace("-3", "-blue");
-    const res = cards.find((c) => card_id.includes(c.cardIdentifier));
-    console.log(card_id);
-    console.log(res);
-    console.log(cards);
-    if (res) {
-      item["artists"] = res.artists;
-      item["classes"] = res.classes;
-      item["sets"] = res.sets;
-      item["rarities"] = res.rarities;
-      item["types"] = res.types;
-      item["subtypes"] = res.subtypes;
-      item["legalHeroes"] = res.legalHeroes;
-      item["legalFormats"] = res.legalFormats;
-      return item;
-    }
-
-    return item;
-  };
 
   return (
     <ScrollArea h={"100%"} mr={32} ml={32}>
@@ -56,9 +28,8 @@ function GridCards() {
                 <Flex className="hover-bar" gap={16}>
                   <Action
                     disabled={
-                      !store.user?.collection.find(
-                        (c) => c.card_id === item.card_id,
-                      )?.quantity
+                      !store.collection.find((c) => c.card_id === item.card_id)
+                        ?.quantity
                     }
                     className="card-button"
                     icon={<IconMinus />}
@@ -70,13 +41,13 @@ function GridCards() {
                           card_id: item.card_id,
                         },
                         (json) => {
-                          store.setUser(json);
+                          store.setCollection(json);
                         },
                       );
                     }}
                   />
                   <Text fw={900} size={"20"}>
-                    {store.user?.collection
+                    {store.collection
                       .find((c) => c.card_id === item.card_id)
                       ?.quantity.toString() || "0"}
                   </Text>
@@ -84,24 +55,14 @@ function GridCards() {
                     className="card-button"
                     icon={<IconPlus />}
                     onClick={async ({ api }) => {
-                      const copy = { ...item };
-
-                      const item2 = SearchEngine(item);
-
-                      if (!item2) {
-                        return;
-                      }
-
-                      console.log(item2);
-
                       await api.put(
                         "/user/:id/collection",
-                        copy,
+                        { card_id: item.card_id },
                         {
                           id: 1,
                         },
                         (json) => {
-                          store.setUser(json);
+                          store.setCollection(json);
                         },
                       );
                     }}

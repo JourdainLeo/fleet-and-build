@@ -2,16 +2,17 @@
 
 import type {
   Card,
+  CollectionCard,
   DeleteApiRoutes,
   GetApiRoutes,
   PostApiRoutes,
   PutApiRoutes,
   User,
 } from "@fleet-and-build/api";
-import { eq } from "drizzle-orm";
+import { and, asc, count, eq, ilike, inArray } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import { db } from "../db";
-import { usersTable } from "../db/schema";
+import { cardsTable, usersTable } from "../db/table";
 
 export async function userRoutes(fastify: FastifyInstance) {
   fastify.post<PostApiRoutes["/user"]>("/user", async (request, reply) => {
@@ -46,6 +47,39 @@ export async function userRoutes(fastify: FastifyInstance) {
       return reply.send(user[0] as User);
     },
   );
+
+  fastify.get<GetApiRoutes["/cards"]>("/cards", async (request, reply) => {
+    const {
+      limit = 50,
+      offset = 0,
+      q = "",
+    } = request.query as GetApiRoutes["/cards"]["Query"];
+
+    const where = [];
+
+    if (q) {
+      where.push(ilike(cardsTable.card_id, `%${q}%`));
+    }
+
+    const cards = await db
+      .select()
+      .from(cardsTable)
+      .where(and(...where))
+      .orderBy(asc(cardsTable.card_id))
+      .limit(Number(limit))
+      .offset(Number(offset));
+
+    if (!cards) {
+      return reply.status(404).send();
+    }
+
+    const total = await db.select({ count: count() }).from(cardsTable);
+
+    return reply.send({
+      count: total[0].count,
+      results: cards as Card[],
+    });
+  });
 
   fastify.put<PutApiRoutes["/user/:id"]>(
     "/user/:id",
@@ -86,31 +120,53 @@ export async function userRoutes(fastify: FastifyInstance) {
         .from(usersTable)
         .where(eq(usersTable.id, id));
 
-      const collection = user.collection as Card[];
+      const collection = user.collection as User["collection"];
       const cardIndex = collection.findIndex(
         (item) => item.card_id === card.card_id,
       );
       if (cardIndex !== -1) {
         collection[cardIndex].quantity += 1;
       } else {
-        collection.push({ ...card, quantity: 1 });
+        collection.push({ card_id: card.card_id, quantity: 1 });
       }
 
-      const [updated] = await db
+      await db
         .update(usersTable)
         .set({
-          collection: JSON.stringify(
-            collection.sort((a, b) => a.card_id.localeCompare(b.card_id)),
-          ),
+          collection: collection,
         })
-        .where(eq(usersTable.id, id))
-        .returning();
+        .where(eq(usersTable.id, id));
 
       if (!user) {
         return reply.status(404).send();
       }
 
-      return reply.send(updated as User);
+      const cardIds = collection.map((item) => item.card_id);
+
+      const quantityMap = collection.reduce<{ [key: string]: number }>(
+        (acc, item) => {
+          acc[item.card_id] = item.quantity;
+          return acc;
+        },
+        {},
+      );
+
+      const userCollectionWithDetails = await db
+        .select()
+        .from(cardsTable)
+        .where(inArray(cardsTable.card_id, cardIds))
+        .orderBy(asc(cardsTable.card_id))
+        .limit(50)
+        .offset(0);
+
+      const result = userCollectionWithDetails.map((card) => {
+        return {
+          ...card,
+          quantity: quantityMap[card.card_id] || 0,
+        };
+      });
+
+      return reply.send(result as CollectionCard[]);
     },
   );
 
@@ -133,20 +189,42 @@ export async function userRoutes(fastify: FastifyInstance) {
         return reply.status(404).send();
       }
 
-      const collection = user.collection as Card[];
+      const collection = user.collection as User["collection"];
 
-      const filteredCollection = collection.filter((card) =>
-        card.card_id.includes(q.toLowerCase()),
+      const cardIds = collection.map((item) => item.card_id);
+
+      const quantityMap = collection.reduce<{ [key: string]: number }>(
+        (acc, item) => {
+          acc[item.card_id] = item.quantity;
+          return acc;
+        },
+        {},
       );
 
-      const paginatedCollection = filteredCollection.slice(
-        offset,
-        offset + limit,
-      );
+      const where = [inArray(cardsTable.card_id, cardIds)];
+
+      if (q) {
+        where.push(ilike(cardsTable.card_id, `%${q}%`));
+      }
+
+      const cards = await db
+        .select()
+        .from(cardsTable)
+        .where(and(...where))
+        .orderBy(asc(cardsTable.card_id))
+        .limit(Number(limit))
+        .offset(Number(offset));
+
+      const result = cards.map((card) => {
+        return {
+          ...card,
+          quantity: quantityMap[card.card_id] || 0,
+        };
+      });
 
       return reply.send({
         count: collection.length,
-        results: paginatedCollection,
+        results: result as CollectionCard[],
       });
     },
   );
@@ -161,7 +239,7 @@ export async function userRoutes(fastify: FastifyInstance) {
         .from(usersTable)
         .where(eq(usersTable.id, id));
 
-      const collection = user.collection as Card[];
+      const collection = user.collection as CollectionCard[];
       const cardIndex = collection.findIndex(
         (item) => item.card_id === card_id,
       );
@@ -175,17 +253,41 @@ export async function userRoutes(fastify: FastifyInstance) {
         return reply.status(404).send();
       }
 
-      const [updated] = await db
+      await db
         .update(usersTable)
         .set({ collection: JSON.stringify(collection) })
-        .where(eq(usersTable.id, id))
-        .returning();
+        .where(eq(usersTable.id, id));
 
       if (!user) {
         return reply.status(404).send();
       }
 
-      return reply.send(updated as User);
+      const cardIds = collection.map((item) => item.card_id);
+
+      const quantityMap = collection.reduce<{ [key: string]: number }>(
+        (acc, item) => {
+          acc[item.card_id] = item.quantity;
+          return acc;
+        },
+        {},
+      );
+
+      const userCollectionWithDetails = await db
+        .select()
+        .from(cardsTable)
+        .where(inArray(cardsTable.card_id, cardIds))
+        .orderBy(asc(cardsTable.card_id))
+        .limit(50)
+        .offset(0);
+
+      const result = userCollectionWithDetails.map((card) => {
+        return {
+          ...card,
+          quantity: quantityMap[card.card_id] || 0,
+        };
+      });
+
+      return reply.send(result as CollectionCard[]);
     },
   );
 }

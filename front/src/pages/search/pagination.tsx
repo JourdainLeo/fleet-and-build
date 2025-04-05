@@ -1,24 +1,16 @@
 import { Card, Flex, Pagination as MantinePagination } from "@mantine/core";
 import { useState } from "react";
+import { useApi } from "../../services/api";
 import { useStore } from "../../services/store";
 
-function Pagination() {
+function Pagination({ onChange }: { onChange?: (offset: number) => void }) {
   const store = useStore();
+  const api = useApi();
   const [activePage, setPage] = useState(1);
 
-  const getUrl = (
-    page: number,
-    totalPages: number,
-    limit: number = 50,
-  ): string => {
+  const getOffset = (page: number, totalPages: number, limit: number = 50) => {
     const safePage = Math.min(Math.max(1, page), totalPages);
-    const offset = (safePage - 1) * limit;
-
-    const url = new URL(store.baseUrl);
-    url.searchParams.set("limit", limit.toString());
-    url.searchParams.set("offset", offset.toString());
-
-    return url.toString();
+    return (safePage - 1) * limit;
   };
 
   return (
@@ -30,10 +22,7 @@ function Pagination() {
           onChange={async (value) => {
             store.setLoading(true);
             setPage(value);
-            const url = getUrl(value, store.count / 50);
-            store.fetchCards(url).then(() => {
-              store.setLoading(false);
-            });
+            if (onChange) onChange(getOffset(value, store.count / 50));
           }}
           withEdges
           size="md"

@@ -6,13 +6,10 @@ import type {
 } from "@fleet-and-build/api";
 import { notifications } from "@mantine/notifications";
 import React, { createContext, useContext } from "react";
-import { useStore } from "./store";
 
 const BASE_URL = "http://localhost:3000";
 
 export class IApi {
-  private store = useStore();
-
   async get<T extends keyof GetApiRoutes>(
     route: T,
     params: GetApiRoutes[T]["Params"],
@@ -69,6 +66,7 @@ export class IApi {
     route: T,
     body: PutApiRoutes[T]["Body"],
     params: PutApiRoutes[T]["Params"],
+    callback: (json: PutApiRoutes[T]["Reply"]) => void,
   ): Promise<void> {
     const url = route.replace(/:(\w+)/g, (_, key) => {
       if (Object.prototype.hasOwnProperty.call(params, key)) {
@@ -98,12 +96,13 @@ export class IApi {
       position: "bottom-right",
     });
 
-    this.store.setUser(await res.json());
+    callback(await res.json());
   }
 
   async delete<T extends keyof DeleteApiRoutes>(
     route: T,
     params: DeleteApiRoutes[T]["Params"],
+    callback: (json: DeleteApiRoutes[T]["Reply"]) => void,
   ): Promise<void> {
     const url = route.replace(/:(\w+)/g, (_, key) => {
       if (Object.prototype.hasOwnProperty.call(params, key)) {
@@ -131,7 +130,7 @@ export class IApi {
       position: "bottom-right",
     });
 
-    this.store.setUser(await res.json());
+    callback(await res.json());
   }
 }
 

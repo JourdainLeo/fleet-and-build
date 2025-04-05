@@ -4,21 +4,18 @@ import {
   Flex,
   TextInput,
 } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
 import { IconSquare } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useStore } from "../../services/store";
 
 function Filter({ fetch }: { fetch: (debounced: string) => void }) {
-  const [query, setQuery] = useState("");
-  const [debounced] = useDebouncedValue(query, 200);
   const store = useStore();
 
   useEffect(() => {
     store.setLoading(true);
 
-    fetch(debounced);
-  }, [debounced]);
+    fetch(store.debounced);
+  }, [store.debounced]);
 
   return (
     <CardComponent>
@@ -26,9 +23,9 @@ function Filter({ fetch }: { fetch: (debounced: string) => void }) {
         <TextInput
           radius={16}
           w={"100%"}
-          value={query}
+          value={store.query}
           onChange={(e) => {
-            setQuery(e.target.value);
+            store.setQuery(e.target.value);
           }}
           placeholder={"Search cards..."}
         />

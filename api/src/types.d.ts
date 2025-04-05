@@ -1,8 +1,9 @@
 import type { Static } from "@sinclair/typebox";
-import type { cardSchema, userSchema } from "./db/schema";
+import type { cardSchema, collectionCardSchema, userSchema } from "./db/schema";
 
 export type User = Static<typeof userSchema>;
 export type Card = Static<typeof cardSchema>;
+export type CollectionCard = Static<typeof collectionCardSchema>;
 
 export interface PostApiRoutes {
   "/user": {
@@ -25,6 +26,15 @@ export interface GetApiRoutes {
   };
   "/user/:id/collection": {
     Params: { id: number };
+    Reply: { count: number; results: CollectionCard[] };
+    Query: {
+      limit?: number;
+      offset?: number;
+      q?: string;
+    };
+  };
+  "/cards": {
+    Params: {};
     Reply: { count: number; results: Card[] };
     Query: {
       limit?: number;
@@ -42,14 +52,14 @@ export interface PutApiRoutes {
   };
   "/user/:id/collection": {
     Params: { id: number };
-    Body: Card;
-    Reply: User;
+    Body: { card_id: string };
+    Reply: CollectionCard[];
   };
 }
 
 export interface DeleteApiRoutes {
   "/user/:id/collection/:card_id": {
     Params: { id: number; card_id: string };
-    Reply: User;
+    Reply: CollectionCard[];
   };
 }

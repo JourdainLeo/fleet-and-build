@@ -1,4 +1,4 @@
-import type { Card } from "@fleet-and-build/api";
+import type { CollectionCard } from "@fleet-and-build/api";
 import {
   Divider,
   Flex,
@@ -24,14 +24,14 @@ function Collection() {
   const store = useStore();
   const api = useApi();
   const [opened, { open, close }] = useDisclosure(false);
-  const [current, setCurrent] = useState<Card>();
+  const [current, setCurrent] = useState<CollectionCard>();
   const [imageLoading, setImageLoading] = useState(false);
 
   useEffect(() => {
     store.setLoading(true);
     api.get("/user/:id/collection", { id: 1 }).then((r) => {
       store.setCount(r.count);
-      store.setCards(r.results);
+      store.setCollection(r.results);
       store.setLoading(false);
     });
   }, []);
@@ -46,7 +46,7 @@ function Collection() {
             .get("/user/:id/collection", { id: 1 }, { q: debounced })
             .then((r) => {
               store.setCount(r.count);
-              store.setCards(r.results);
+              store.setCollection(r.results);
               store.setLoading(false);
             });
         }}
@@ -55,7 +55,7 @@ function Collection() {
       <ScrollArea h={"100%"} mr={32} ml={32}>
         <Grid gutter={16} align={"stretch"} p={16}>
           {!store.loading ? (
-            store.cards.map((item) => (
+            store.collection.map((item) => (
               <Grid.Col
                 key={item.card_id}
                 span={store.grid}
@@ -75,7 +75,27 @@ function Collection() {
         </Grid>
       </ScrollArea>
 
-      <Pagination />
+      <Pagination
+        onChange={async (offset) => {
+          await api
+            .get(
+              "/user/:id/collection",
+              {
+                id: 1,
+              },
+              {
+                limit: 50,
+                offset: offset,
+                q: store.debounced,
+              },
+            )
+            .then((r) => {
+              store.setCount(r.count);
+              store.setLoading(false);
+              store.setCollection(r.results);
+            });
+        }}
+      />
 
       <Modal
         opened={opened}
@@ -116,11 +136,11 @@ function Collection() {
                   Illustration: {current?.artists ? current.artists[0] : "None"}
                 </Text>
               </Flex>
-              {current?.text_html && (
+              {current?.other.text_html && (
                 <MantineCard className={"card-text"} radius={16}>
                   <Text
                     dangerouslySetInnerHTML={{
-                      __html: current?.text_html || "",
+                      __html: current?.other.text_html || "",
                     }}
                   />
                 </MantineCard>
@@ -148,9 +168,8 @@ function Collection() {
                         card_id: current.card_id,
                       },
                       (json) => {
-                        store.setUser(json);
-                        store.setCards(json.collection);
-                        const c = json.collection.find(
+                        store.setCollection(json);
+                        const c = json.find(
                           (c) => c.card_id === current.card_id,
                         );
 
@@ -171,17 +190,14 @@ function Collection() {
                     if (!current) return;
                     await api.put(
                       "/user/:id/collection",
-                      current,
+                      { card_id: current.card_id },
                       {
                         id: 1,
                       },
                       (json) => {
-                        store.setUser(json);
-                        store.setCards(json.collection);
+                        store.setCollection(json);
                         setCurrent(
-                          json.collection.find(
-                            (c) => c.card_id === current.card_id,
-                          ),
+                          json.find((c) => c.card_id === current.card_id),
                         );
                       },
                     );
