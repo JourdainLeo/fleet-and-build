@@ -1,5 +1,6 @@
 import type { CollectionCard } from "@fleet-and-build/api";
 import {
+  Badge,
   Divider,
   Flex,
   Grid,
@@ -10,7 +11,7 @@ import {
   Skeleton,
   Text,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Action } from "../components/Action";
@@ -26,6 +27,8 @@ function Collection() {
   const [opened, { open, close }] = useDisclosure(false);
   const [current, setCurrent] = useState<CollectionCard>();
   const [imageLoading, setImageLoading] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTablet = useMediaQuery("(max-width: 1040px)");
 
   useEffect(() => {
     store.setLoading(true);
@@ -102,22 +105,26 @@ function Collection() {
         onClose={close}
         title="Card information"
         centered
-        size={"60%"}
+        size={isMobile ? "100%" : isTablet ? "100%" : "80%"}
         radius={16}
       >
-        <Flex h={"100%"} flex={1}>
-          <Flex align={"center"}>
+        <Flex
+          h={!isMobile || !isTablet ? "70vh" : "75vh"}
+          flex={1}
+          direction={isMobile ? "column" : "row"}
+        >
+          <Flex align={"center"} justify={"center"} h={"100%"} flex={1}>
             <Skeleton
               visible={imageLoading}
               animate
               radius={16}
-              h={500}
-              w={358}
+              h={isMobile ? 307 : isTablet ? 391 : 500}
+              w={isMobile ? 220 : isTablet ? 220 : 358}
             >
               <Image
-                h={500}
                 src={current?.image.large}
                 fit="contain"
+                h={"100%"}
                 onLoad={() => {
                   setImageLoading(false);
                 }}
@@ -125,13 +132,20 @@ function Collection() {
               />
             </Skeleton>
           </Flex>
-          <Divider orientation={"vertical"} m={16} />
+          <Divider orientation={isMobile ? "horizontal" : "vertical"} m={16} />
           <Flex direction={"column"} justify={"space-between"} w={"100%"}>
             <Flex flex={1} direction={"column"} gap={16} w={"100%"}>
               <Flex direction={"column"}>
-                <Text fw={600} fz={32}>
-                  {current?.name}
-                </Text>
+                <Flex justify={"space-between"} align={"center"}>
+                  <Text fw={600} fz={32}>
+                    {current?.name}
+                  </Text>
+                  <Flex gap={8}>
+                    {current?.classes.map((c) => {
+                      return <Badge>{c}</Badge>;
+                    })}
+                  </Flex>
+                </Flex>
                 <Text mt={-8} fz={12}>
                   Illustration: {current?.artists ? current.artists[0] : "None"}
                 </Text>
@@ -145,13 +159,67 @@ function Collection() {
                   />
                 </MantineCard>
               )}
-              <Flex direction={"column"}>
-                <Text>Class: {current?.quantity}</Text>
-                <Text>Type: {current?.quantity}</Text>
-                <Text>Action: {current?.quantity}</Text>
-                <Text>Rarities: {current?.quantity}</Text>
-                <Text>Artist: {current?.quantity}</Text>
-                <Text>Set: {current?.quantity}</Text>
+              <Flex direction={"column"} gap={16}>
+                <Flex direction={"column"} gap={2}>
+                  <Text fw={600}>Types</Text>
+                  <Flex gap={8}>
+                    {current?.types.map((r) => {
+                      return <Badge key={r}>{r}</Badge>;
+                    })}
+                  </Flex>
+                </Flex>
+                <Flex direction={"column"} gap={2}>
+                  <Text fw={600}>Sets</Text>
+                  <Flex gap={8}>
+                    {current?.sets.map((r) => {
+                      return <Badge key={r}>{r}</Badge>;
+                    })}
+                  </Flex>
+                </Flex>
+                <Flex direction={"column"} gap={2}>
+                  <Text fw={600}>Rarities</Text>
+                  <Flex gap={8}>
+                    {current?.rarities.map((r) => {
+                      return (
+                        <Badge
+                          key={r}
+                          variant="outline"
+                          color={
+                            r === "Common"
+                              ? "gray"
+                              : r === "Rare"
+                                ? "blue"
+                                : r === "Majestic"
+                                  ? "violet"
+                                  : r === "Legendary"
+                                    ? "yellow"
+                                    : r === "Fabled"
+                                      ? "red"
+                                      : ""
+                          }
+                        >
+                          {r}
+                        </Badge>
+                      );
+                    })}
+                  </Flex>
+                </Flex>
+                <Flex direction={"column"} gap={2}>
+                  <Text fw={600}>Legal Heroes</Text>
+                  <Flex gap={8}>
+                    {current?.legalHeroes.map((r) => {
+                      return <Badge key={r}>{r}</Badge>;
+                    })}
+                  </Flex>
+                </Flex>
+                <Flex direction={"column"} gap={2}>
+                  <Text fw={600}>Legal Formats</Text>
+                  <Flex wrap={"wrap"} gap={8}>
+                    {current?.legalFormats.map((r) => {
+                      return <Badge>{r}</Badge>;
+                    })}
+                  </Flex>
+                </Flex>
               </Flex>
             </Flex>
             <MantineCard p={8} radius={16}>

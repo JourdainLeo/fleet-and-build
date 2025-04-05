@@ -10,7 +10,6 @@ const LIMIT = 100;
 import dotenv from "dotenv";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import type { Card } from "../../types";
 
 dotenv.config();
 
@@ -44,7 +43,7 @@ export interface FabApiCard {
   back_face: string | null;
 }
 
-function enrichCard(baseCard: FabApiCard, index: number): Card {
+function enrichCard(baseCard: FabApiCard, index: number): any {
   const card_id = baseCard.card_id
     .replace("-1", "-red")
     .replace("-2", "-yellow")
