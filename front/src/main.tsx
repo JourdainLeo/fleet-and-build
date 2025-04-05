@@ -54,13 +54,6 @@ const theme = createTheme({
         },
       }),
     },
-    Modal: {
-      styles: () => ({
-        root: {
-          borderRadius: "16px",
-        },
-      }),
-    },
   },
 });
 

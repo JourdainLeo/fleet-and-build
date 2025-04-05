@@ -55,7 +55,7 @@ function App() {
               hiddenFrom="sm"
               size="sm"
             />
-            <Image src={"/public/icon.png"} h={38} w={38}></Image>
+            <Image src={"icon.png"} h={38} w={38}></Image>
             <Text fw={600}>Fleet and Build</Text>
           </Group>
 

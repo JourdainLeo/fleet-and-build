@@ -108,6 +108,7 @@ function Collection() {
         opened={opened}
         onClose={close}
         title="Card information"
+        radius={16}
         centered
         size={isMobile ? "100%" : isTablet ? "100%" : "80%"}
       >

@@ -14,7 +14,7 @@ function LoadingCards() {
               fit="contain"
               className="card-image fade-in"
               loading="lazy"
-              src={"/public/ARC125.webp"}
+              src={"/ARC125.webp"}
             />
           </Skeleton>
         </Flex>

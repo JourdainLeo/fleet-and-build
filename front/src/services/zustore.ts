@@ -53,9 +53,30 @@ interface StoreState {
     key: K,
     value: StoreState[K],
   ) => void;
+
+  getActiveFilters: () => {
+    hero?: string;
+    set?: string;
+    type?: string;
+    rarity?: string;
+    fusion?: string;
+    artist?: string;
+
+    pitch?: number;
+    pitch_operator?: string;
+
+    defense?: number;
+    defense_operator?: string;
+
+    attack?: number;
+    attack_operator?: string;
+
+    cost?: number;
+    cost_operator?: string;
+  };
 }
 
-export const useZustore = create<StoreState>((set) => ({
+export const useZustore = create<StoreState>((set, get) => ({
   user: undefined,
   setUser: (u) => set({ user: u }),
 
@@ -100,4 +121,24 @@ export const useZustore = create<StoreState>((set) => ({
   cost_operator: "=",
 
   setFilter: (key, value) => set({ [key]: value }),
+
+  getActiveFilters: () => {
+    const state = get();
+    return {
+      hero: state.hero,
+      set: state.set,
+      type: state.type,
+      rarity: state.rarity,
+      fusion: state.fusion,
+      artist: state.artist,
+      pitch: state.pitch,
+      pitch_operator: state.pitch_operator,
+      defense: state.defense,
+      defense_operator: state.defense_operator,
+      attack: state.attack,
+      attack_operator: state.attack_operator,
+      cost: state.cost,
+      cost_operator: state.cost_operator,
+    };
+  },
 }));
