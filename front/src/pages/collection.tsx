@@ -82,7 +82,8 @@ function Collection() {
         onClose={close}
         title="Card information"
         centered
-        size={"70%"}
+        size={"60%"}
+        radius={16}
       >
         <Flex h={"100%"} flex={1}>
           <Flex align={"center"}>
@@ -105,8 +106,8 @@ function Collection() {
             </Skeleton>
           </Flex>
           <Divider orientation={"vertical"} m={16} />
-          <Flex direction={"column"} justify={"space-between"}>
-            <Flex flex={1} direction={"column"} gap={16}>
+          <Flex direction={"column"} justify={"space-between"} w={"100%"}>
+            <Flex flex={1} direction={"column"} gap={16} w={"100%"}>
               <Flex direction={"column"}>
                 <Text fw={600} fz={32}>
                   {current?.name}
@@ -116,7 +117,7 @@ function Collection() {
                 </Text>
               </Flex>
               {current?.text_html && (
-                <MantineCard className={"card-text"}>
+                <MantineCard className={"card-text"} radius={16}>
                   <Text
                     dangerouslySetInnerHTML={{
                       __html: current?.text_html || "",
@@ -133,7 +134,7 @@ function Collection() {
                 <Text>Set: {current?.quantity}</Text>
               </Flex>
             </Flex>
-            <MantineCard p={8}>
+            <MantineCard p={8} radius={16}>
               <Flex gap={32} align={"center"} justify={"center"}>
                 <Action
                   icon={<IconMinus />}
