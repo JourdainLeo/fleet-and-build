@@ -1,3 +1,4 @@
+import type { FilterQuery } from "@fleet-and-build/api";
 import {
   ActionIcon,
   Badge,
@@ -7,13 +8,20 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
-import { IconFilterFilled, IconSquare, IconX } from "@tabler/icons-react";
+import {
+  IconFilterFilled,
+  IconSearch,
+  IconSortAscending,
+  IconSortDescending,
+  IconSquare,
+  IconX,
+} from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
 import { useZustore } from "../../services/zustore";
 import FilterModal from "./filter-modal";
 
-function Filter({ fetch }: { fetch: (debounced: string) => void }) {
+function Filter({ fetch }: { fetch: (query: FilterQuery) => void }) {
   const [opened, { open, close }] = useDisclosure(false);
   const q = useZustore((state) => state.q);
   const setQ = useZustore((state) => state.setQ);
@@ -33,6 +41,7 @@ function Filter({ fetch }: { fetch: (debounced: string) => void }) {
   const attack_operator = useZustore((s) => s.attack_operator);
   const cost = useZustore((s) => s.cost);
   const cost_operator = useZustore((s) => s.cost_operator);
+  const order = useZustore((s) => s.order);
   const [debounced] = useDebouncedValue(q, 200);
   const activeFilters = {
     hero,
@@ -58,21 +67,69 @@ function Filter({ fetch }: { fetch: (debounced: string) => void }) {
 
   useEffect(() => {
     setLoading(true);
-    fetch(debounced);
+    fetch({
+      q: debounced,
+      ...activeFilters,
+      order: order,
+      limit: 50,
+      offset: 0,
+    });
   }, [debounced]);
+
+  useEffect(() => {
+    setFilter("hero", undefined);
+    setFilter("set", undefined);
+    setFilter("type", undefined);
+    setFilter("rarity", undefined);
+    setFilter("fusion", undefined);
+    setFilter("artist", undefined);
+    setFilter("pitch", undefined);
+    setFilter("pitch_operator", undefined);
+    setFilter("defense", undefined);
+    setFilter("defense_operator", undefined);
+    setFilter("attack", undefined);
+    setFilter("attack_operator", undefined);
+    setFilter("cost", undefined);
+    setFilter("cost_operator", undefined);
+    setFilter("order", "asc");
+  }, []);
 
   return (
     <MantineCard style={{ borderRadius: 0 }}>
-      <Flex mb={8} gap={16}>
+      <Flex mb={8} gap={16} align={"center"}>
         <TextInput
           flex={1}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={"Search cards..."}
         />
+        <Button
+          leftSection={<IconSearch />}
+          onClick={() => {
+            setLoading(true);
+            fetch({ q: debounced, ...activeFilters, order: order });
+          }}
+        >
+          Search
+        </Button>
+
         <Button leftSection={<IconFilterFilled />} onClick={open}>
           Filter
         </Button>
+        <ActionIcon
+          variant={"subtle"}
+          onClick={() => {
+            setFilter("order", order === "asc" ? "desc" : "asc");
+            setLoading(true);
+            fetch({
+              q: debounced,
+              ...activeFilters,
+              order: order === "asc" ? "desc" : "asc",
+            });
+          }}
+        >
+          {order === "asc" ? <IconSortAscending /> : <IconSortDescending />}
+        </ActionIcon>
       </Flex>
       <Flex justify={"space-between"} align={"center"}>
         <Flex gap="sm" component={motion.div} layout>
@@ -152,7 +209,7 @@ function Filter({ fetch }: { fetch: (debounced: string) => void }) {
               );
             })}
           </AnimatePresence>
-        </Flex>{" "}
+        </Flex>
         <Flex align={"center"} justify={"center"}>
           <ActionIcon variant={"subtle"}>
             <IconSquare

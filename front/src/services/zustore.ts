@@ -37,17 +37,19 @@ interface StoreState {
   fusion?: string;
   artist?: string;
 
-  pitch?: number;
-  pitch_operator?: string;
+  pitch?: 1 | 2 | 3;
+  pitch_operator?: "=" | "<" | ">" | "<=" | ">=";
 
   defense?: number;
-  defense_operator?: string;
+  defense_operator?: "=" | "<" | ">" | "<=" | ">=";
 
   attack?: number;
-  attack_operator?: string;
+  attack_operator?: "=" | "<" | ">" | "<=" | ">=";
 
   cost?: number;
-  cost_operator?: string;
+  cost_operator?: "=" | "<" | ">" | "<=" | ">=";
+
+  order: "asc" | "desc";
 
   setFilter: <K extends keyof Omit<StoreState, "setFilter">>(
     key: K,
@@ -119,6 +121,7 @@ export const useZustore = create<StoreState>((set, get) => ({
   attack_operator: "=",
   cost: undefined,
   cost_operator: "=",
+  order: "asc",
 
   setFilter: (key, value) => set({ [key]: value }),
 
@@ -139,6 +142,7 @@ export const useZustore = create<StoreState>((set, get) => ({
       attack_operator: state.attack_operator,
       cost: state.cost,
       cost_operator: state.cost_operator,
+      order: state.order,
     };
   },
 }));

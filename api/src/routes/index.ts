@@ -9,7 +9,20 @@ import type {
   PutApiRoutes,
   User,
 } from "@fleet-and-build/api";
-import { and, asc, count, eq, ilike, inArray } from "drizzle-orm";
+import {
+  and,
+  arrayOverlaps,
+  asc,
+  count,
+  desc,
+  eq,
+  gt,
+  gte,
+  ilike,
+  inArray,
+  lt,
+  lte,
+} from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import { db } from "../db";
 import { cardsTable, usersTable } from "../db/table";
@@ -49,25 +62,124 @@ export async function userRoutes(fastify: FastifyInstance) {
   );
 
   fastify.get<GetApiRoutes["/cards"]>("/cards", async (request, reply) => {
-    const {
-      limit = 50,
-      offset = 0,
-      q = "",
-    } = request.query as GetApiRoutes["/cards"]["Query"];
+    const query = request.query as GetApiRoutes["/cards"]["Query"];
 
     const where = [];
 
-    if (q) {
-      where.push(ilike(cardsTable.card_id, `%${q}%`));
+    if (query.q) {
+      where.push(ilike(cardsTable.card_id, `%${query.q}%`));
+    }
+
+    if (query.pitch) {
+      if (query.pitch_operator === "=") {
+        where.push(eq(cardsTable.pitch, query.pitch));
+      }
+      if (query.pitch_operator === ">") {
+        where.push(gt(cardsTable.pitch, query.pitch));
+      }
+      if (query.pitch_operator === "<") {
+        where.push(lt(cardsTable.pitch, query.pitch));
+      }
+      if (query.pitch_operator === ">=") {
+        where.push(gte(cardsTable.pitch, query.pitch));
+      }
+      if (query.pitch_operator === "<=") {
+        where.push(lte(cardsTable.pitch, query.pitch));
+      }
+    }
+
+    if (query.attack) {
+      if (query.attack_operator === "=") {
+        where.push(eq(cardsTable.power, query.attack));
+      }
+      if (query.attack_operator === ">") {
+        where.push(gt(cardsTable.power, query.attack));
+      }
+      if (query.attack_operator === "<") {
+        where.push(lt(cardsTable.power, query.attack));
+      }
+      if (query.attack_operator === ">=") {
+        where.push(gte(cardsTable.power, query.attack));
+      }
+      if (query.attack_operator === "<=") {
+        where.push(lte(cardsTable.power, query.attack));
+      }
+    }
+
+    if (query.defense) {
+      if (query.defense_operator === "=") {
+        where.push(eq(cardsTable.defense, query.defense));
+      }
+      if (query.defense_operator === ">") {
+        where.push(gt(cardsTable.defense, query.defense));
+      }
+      if (query.defense_operator === "<") {
+        where.push(lt(cardsTable.defense, query.defense));
+      }
+      if (query.defense_operator === ">=") {
+        where.push(gte(cardsTable.defense, query.defense));
+      }
+      if (query.defense_operator === "<=") {
+        where.push(lte(cardsTable.defense, query.defense));
+      }
+    }
+
+    if (query.cost) {
+      if (query.cost_operator === "=") {
+        where.push(eq(cardsTable.cost, query.cost));
+      }
+      if (query.cost_operator === ">") {
+        where.push(gt(cardsTable.cost, query.cost));
+      }
+      if (query.cost_operator === "<") {
+        where.push(lt(cardsTable.cost, query.cost));
+      }
+      if (query.cost_operator === ">=") {
+        where.push(gte(cardsTable.cost, query.cost));
+      }
+      if (query.cost_operator === "<=") {
+        where.push(lte(cardsTable.cost, query.cost));
+      }
+    }
+
+    if (query.hero) {
+      where.push(arrayOverlaps(cardsTable.legalHeroes, [query.hero]));
+    }
+
+    if (query.set) {
+      where.push(arrayOverlaps(cardsTable.sets, [query.set]));
+    }
+
+    if (query.type) {
+      where.push(arrayOverlaps(cardsTable.types, [query.type]));
+    }
+
+    if (query.rarity) {
+      where.push(arrayOverlaps(cardsTable.rarities, [query.rarity]));
+    }
+
+    if (query.fusion) {
+      where.push(arrayOverlaps(cardsTable.classes, [query.fusion]));
+    }
+
+    if (query.artist) {
+      where.push(arrayOverlaps(cardsTable.artists, [query.artist]));
     }
 
     const cards = await db
       .select()
       .from(cardsTable)
       .where(and(...where))
-      .orderBy(asc(cardsTable.card_id))
-      .limit(Number(limit))
-      .offset(Number(offset));
+      .orderBy(
+        query.order === "desc"
+          ? desc(cardsTable.card_id)
+          : asc(cardsTable.card_id),
+      )
+      .limit(Number(query.limit ?? 50))
+      .offset(Number(query.offset ?? 0));
+
+    console.log(JSON.stringify(query));
+    console.log(cards.length);
 
     if (!cards) {
       return reply.status(404).send();

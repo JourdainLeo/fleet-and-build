@@ -15,7 +15,7 @@ function Search() {
 
   useEffect(() => {
     setLoading(true);
-    api.get("/cards", { id: 1 }).then((r) => {
+    api.get("/cards", { id: 1 }, { limit: 50, offset: 0 }).then((r) => {
       setCount(r.count);
       setCards(r.results);
       setLoading(false);
@@ -25,8 +25,8 @@ function Search() {
   return (
     <Flex h={"100%"} direction={"column"} pb={16}>
       <Filter
-        fetch={(debounced) => {
-          api.get("/cards", { id: 1 }, { q: debounced }).then((r) => {
+        fetch={(query) => {
+          api.get("/cards", { id: 1 }, query).then((r) => {
             setCount(r.count);
             setCards(r.results);
             setLoading(false);
@@ -35,22 +35,12 @@ function Search() {
       />
       <GridCards />
       <Pagination
-        onChange={async (offset) => {
-          await api
-            .get(
-              "/cards",
-              {},
-              {
-                limit: 50,
-                offset: offset,
-                q: q,
-              },
-            )
-            .then((r) => {
-              setCount(r.count);
-              setLoading(false);
-              setCards(r.results);
-            });
+        onChange={async (query) => {
+          await api.get("/cards", {}, query).then((r) => {
+            setCount(r.count);
+            setLoading(false);
+            setCards(r.results);
+          });
         }}
       />
     </Flex>

@@ -18,6 +18,27 @@ export interface PostApiRoutes {
   };
 }
 
+export interface FilterQuery {
+  limit?: number;
+  offset?: number;
+  q?: string;
+  pitch?: number;
+  pitch_operator?: string;
+  order?: "asc" | "desc";
+  defense?: number;
+  defense_operator?: string;
+  attack?: number;
+  attack_operator?: string;
+  cost?: number;
+  cost_operator?: string;
+  hero?: string;
+  set?: string;
+  type?: string;
+  rarity?: string;
+  fusion?: string;
+  artist?: string;
+}
+
 export interface GetApiRoutes {
   "/user/:id": {
     Params: { id: number };
@@ -27,20 +48,12 @@ export interface GetApiRoutes {
   "/user/:id/collection": {
     Params: { id: number };
     Reply: { count: number; results: CollectionCard[] };
-    Query: {
-      limit?: number;
-      offset?: number;
-      q?: string;
-    };
+    Query: FilterQuery;
   };
   "/cards": {
     Params: {};
     Reply: { count: number; results: Card[] };
-    Query: {
-      limit?: number;
-      offset?: number;
-      q?: string;
-    };
+    Query: FilterQuery;
   };
 }
 
