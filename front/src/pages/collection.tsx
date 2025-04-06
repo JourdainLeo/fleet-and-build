@@ -15,11 +15,10 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Action } from "../components/Action";
+import Filter from "../components/Filter";
 import { useApi } from "../services/api";
 import { useZustore } from "../services/zustore";
-import Filter from "./search/filter";
 import LoadingCards from "./search/loading-cards";
-import Pagination from "./search/pagination";
 
 function Collection() {
   const api = useApi();
@@ -35,9 +34,6 @@ function Collection() {
   const grid = useZustore((state) => state.grid);
   const collection = useZustore((state) => state.collection);
   const loading = useZustore((state) => state.loading);
-  const q = useZustore((state) => state.q);
-
-  console.log(isTablet, isMobile);
 
   useEffect(() => {
     setLoading(true);
@@ -51,7 +47,7 @@ function Collection() {
   }, []);
 
   return (
-    <Flex h={"100%"} direction={"column"} pb={16}>
+    <>
       <Filter
         fetch={(query) => {
           api.get("/user/:id/collection", { id: 1 }, query).then((r) => {
@@ -60,48 +56,34 @@ function Collection() {
             setLoading(false);
           });
         }}
-      />
-
-      <ScrollArea h={"100%"} mr={32} ml={32}>
-        <Grid gutter={16} align={"stretch"} p={16}>
-          {!loading ? (
-            collection.map((item) => (
-              <Grid.Col
-                key={item.card_id}
-                span={grid}
-                className={"collection-card"}
-                onClick={() => {
-                  open();
-                  setCurrent(item);
-                  setImageLoading(true);
-                }}
-              >
-                <Image src={item.image.normal} fit="contain" loading={"lazy"} />
-              </Grid.Col>
-            ))
-          ) : (
-            <LoadingCards />
-          )}
-        </Grid>
-      </ScrollArea>
-
-      <Pagination
-        onChange={async (query) => {
-          await api
-            .get(
-              "/user/:id/collection",
-              {
-                id: 1,
-              },
-              query,
-            )
-            .then((r) => {
-              setCount(r.count);
-              setLoading(false);
-              setCollection(r.results);
-            });
-        }}
-      />
+      >
+        <ScrollArea h={"100%"} mr={32} ml={32}>
+          <Grid gutter={16} align={"stretch"} p={16}>
+            {!loading ? (
+              collection.map((item) => (
+                <Grid.Col
+                  key={item.card_id}
+                  span={grid}
+                  className={"collection-card"}
+                  onClick={() => {
+                    open();
+                    setCurrent(item);
+                    setImageLoading(true);
+                  }}
+                >
+                  <Image
+                    src={item.image.normal}
+                    fit="contain"
+                    loading={"lazy"}
+                  />
+                </Grid.Col>
+              ))
+            ) : (
+              <LoadingCards />
+            )}
+          </Grid>
+        </ScrollArea>
+      </Filter>
 
       <Modal
         opened={opened}
@@ -329,7 +311,7 @@ function Collection() {
           </Flex>
         </Flex>
       </Modal>
-    </Flex>
+    </>
   );
 }
 
