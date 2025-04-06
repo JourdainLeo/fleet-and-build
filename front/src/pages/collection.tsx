@@ -27,7 +27,8 @@ function Collection() {
   const [current, setCurrent] = useState<CollectionCard>();
   const [imageLoading, setImageLoading] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const isTablet = useMediaQuery("(max-width: 1040px)");
+  const isTablet = useMediaQuery("(max-width: 1060px)");
+  const isBigTablet = useMediaQuery("(max-width: 1390px)");
   const setLoading = useZustore((state) => state.setLoading);
   const setCollection = useZustore((state) => state.setCollection);
   const setCount = useZustore((state) => state.setCount);
@@ -35,6 +36,8 @@ function Collection() {
   const collection = useZustore((state) => state.collection);
   const loading = useZustore((state) => state.loading);
   const q = useZustore((state) => state.q);
+
+  console.log(isTablet, isMobile);
 
   useEffect(() => {
     setLoading(true);
@@ -113,47 +116,89 @@ function Collection() {
         size={isMobile ? "100%" : isTablet ? "100%" : "80%"}
       >
         <Flex
-          h={!isMobile || !isTablet ? "70vh" : "75vh"}
+          h={!isMobile || !isTablet ? "80vh" : "100vh"}
           flex={1}
           direction={isMobile ? "column" : "row"}
         >
           <Flex align={"center"} justify={"center"} h={"100%"} flex={1}>
-            <Skeleton
-              visible={imageLoading}
-              animate
-              h={isMobile ? 307 : isTablet ? 391 : 500}
-              w={isMobile ? 220 : isTablet ? 220 : 358}
-            >
-              <Image
-                src={current?.image.large}
-                fit="contain"
-                h={"100%"}
-                onLoad={() => {
-                  setImageLoading(false);
-                }}
-                loading={"lazy"}
-              />
-            </Skeleton>
+            {(!isTablet || isMobile) && (
+              <Skeleton
+                visible={imageLoading}
+                animate
+                h={isMobile ? 307 : isBigTablet ? 399 : 500}
+                w={isMobile ? 220 : isBigTablet ? 286 : 358}
+                radius="md"
+              >
+                <Image
+                  src={current?.image.large}
+                  fit="contain"
+                  height={isMobile ? 307 : isBigTablet ? 400 : 500}
+                  width={isMobile ? 220 : isBigTablet ? 286 : 358}
+                  radius="md"
+                  onLoad={() => setImageLoading(false)}
+                  loading="lazy"
+                />
+              </Skeleton>
+            )}
           </Flex>
-          <Divider orientation={isMobile ? "horizontal" : "vertical"} m={16} />
-          <Flex direction={"column"} justify={"space-between"} w={"100%"}>
-            <Flex flex={1} direction={"column"} gap={16} w={"100%"}>
-              <Flex direction={"column"}>
-                <Flex justify={"space-between"} align={"center"}>
+          {(!isTablet || isMobile) && (
+            <Divider
+              orientation={isMobile ? "horizontal" : "vertical"}
+              m={16}
+            />
+          )}
+          <Flex
+            direction={"column"}
+            justify={"space-between"}
+            w={"100%"}
+            gap={16}
+          >
+            <Flex flex={1} direction={"column"} w={"100%"} gap={16}>
+              <Flex gap={16}>
+                {isTablet && !isMobile && (
+                  <Skeleton
+                    visible={imageLoading}
+                    animate
+                    h={isMobile ? 307 : isTablet ? 307 : 500}
+                    w={isMobile ? 220 : isTablet ? 220 : 358}
+                    radius="md"
+                  >
+                    <Image
+                      src={current?.image.large}
+                      fit="contain"
+                      height={isMobile ? 307 : isTablet ? 307 : 500}
+                      width={isMobile ? 220 : isTablet ? 220 : 358}
+                      radius="md"
+                      onLoad={() => setImageLoading(false)}
+                      loading="lazy"
+                    />
+                  </Skeleton>
+                )}
+                <Flex
+                  direction={"column"}
+                  flex={1}
+                  style={{ textAlign: isMobile ? "center" : "left" }}
+                >
                   <Text fw={600} fz={32}>
                     {current?.name}
                   </Text>
-                  <Flex gap={8}>
-                    {current?.classes.map((c) => {
-                      return <Badge>{c}</Badge>;
-                    })}
-                  </Flex>
+                  <Text mt={-8} fz={12}>
+                    Illustration:{" "}
+                    {current?.artists ? current.artists[0] : "None"}
+                  </Text>
+                  {isTablet && current?.other.text_html && (
+                    <MantineCard className={"card-text"} mt={16}>
+                      <Text
+                        dangerouslySetInnerHTML={{
+                          __html: current?.other.text_html || "",
+                        }}
+                      />
+                    </MantineCard>
+                  )}
                 </Flex>
-                <Text mt={-8} fz={12}>
-                  Illustration: {current?.artists ? current.artists[0] : "None"}
-                </Text>
               </Flex>
-              {current?.other.text_html && (
+              {isTablet && !isMobile && <Divider orientation={"horizontal"} />}
+              {!isTablet && current?.other.text_html && (
                 <MantineCard className={"card-text"}>
                   <Text
                     dangerouslySetInnerHTML={{
@@ -163,6 +208,15 @@ function Collection() {
                 </MantineCard>
               )}
               <Flex direction={"column"} gap={16}>
+                <Flex direction={"column"} gap={2}>
+                  <Text fw={600}>Classes</Text>
+                  <Flex gap={8}>
+                    {current?.classes.map((c) => {
+                      return <Badge>{c}</Badge>;
+                    })}
+                  </Flex>
+                </Flex>
+
                 <Flex direction={"column"} gap={2}>
                   <Text fw={600}>Types</Text>
                   <Flex gap={8}>
@@ -209,7 +263,7 @@ function Collection() {
                 </Flex>
                 <Flex direction={"column"} gap={2}>
                   <Text fw={600}>Legal Heroes</Text>
-                  <Flex gap={8}>
+                  <Flex gap={8} wrap={"wrap"}>
                     {current?.legalHeroes.map((r) => {
                       return <Badge key={r}>{r}</Badge>;
                     })}
