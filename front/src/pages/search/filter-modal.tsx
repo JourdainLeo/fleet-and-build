@@ -94,7 +94,7 @@ function FilterModal({
         </Flex>
         <Flex gap={16} wrap="wrap">
           <CompareInput
-            pitch={pitch}
+            pitch
             value={pitch}
             label={"Pitch"}
             k={"pitch"}
@@ -135,16 +135,20 @@ function FilterModal({
   );
 }
 
-const Select = React.memo(({ label, data, value, onChange }: SelectProps) => (
-  <MantineSelect
-    flex={1}
-    label={label}
-    placeholder="Pick value"
-    data={data}
-    value={value}
-    onChange={onChange}
-  />
-));
+const Select = React.memo(({ label, data, value, onChange }: SelectProps) => {
+  const l = typeof label === "string" ? label.toLowerCase() : "";
+  return (
+    <MantineSelect
+      flex={1}
+      label={label}
+      placeholder={"Pick " + l}
+      data={data}
+      value={value}
+      clearable
+      onChange={onChange}
+    />
+  );
+});
 
 const artists = [
   "AOJI Maiko",

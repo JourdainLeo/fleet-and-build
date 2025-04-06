@@ -11,7 +11,7 @@ export interface CompareInputProps {
     | "attack_operator"
     | "defense_operator"
     | "pitch_operator";
-  pitch?: number;
+  pitch?: boolean;
   icon?: string;
   value?: number | string;
   operatorValue?: string;
@@ -59,10 +59,11 @@ const CompareInput = React.memo(
                 data={["Red (1)", "Yellow (2)", "Blue (3)"]}
                 placeholder="Pick value"
                 flex={2}
+                clearable
                 value={
-                  pitch === 1
+                  Number(value) === 1
                     ? "Red (1)"
-                    : pitch === 2
+                    : Number(value) === 2
                       ? "Yellow (2)"
                       : "Blue (3)"
                 }
