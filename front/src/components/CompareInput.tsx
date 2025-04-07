@@ -89,7 +89,7 @@ const CompareInput = React.memo(
                 min={0}
                 flex={2}
                 placeholder="Pick pitch"
-                value={value}
+                value={value ?? ""}
                 onChange={(v) => {
                   setFilter(k, Number(v));
                 }}
