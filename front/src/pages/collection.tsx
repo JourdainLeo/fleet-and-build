@@ -387,7 +387,7 @@ function Collection() {
                   </Flex>
                 </Flex>
 
-                <Flex direction={"column"} gap={2}>
+                <Flex direction={"column"} gap={2} pb={16}>
                   <Text fw={600} fz={12}>
                     Legal Formats
                   </Text>
