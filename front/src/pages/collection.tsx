@@ -108,7 +108,7 @@ function Collection() {
         size={"100%"}
       >
         <Flex
-          h={!isMobile || !isTablet ? "57vh" : "100vh"}
+          h={isMobile ? "100vh" : isTablet ? "70vh" : "57vh"}
           flex={1}
           direction={isMobile ? "column" : "row"}
         >
