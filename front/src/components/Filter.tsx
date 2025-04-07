@@ -9,7 +9,11 @@ import {
   Pagination as MantinePagination,
   TextInput,
 } from "@mantine/core";
-import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import {
+  useDebouncedValue,
+  useDisclosure,
+  useMediaQuery,
+} from "@mantine/hooks";
 import {
   IconFilterFilled,
   IconSearch,
@@ -110,6 +114,7 @@ function Filter({
     setFilter("cost_operator", undefined);
     setFilter("order", "asc");
   }, []);
+  const isTablet = useMediaQuery("(max-width: 1060px)");
 
   return (
     <Flex h={"100%"} direction={"column"} pb={16}>

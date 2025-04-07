@@ -114,3 +114,8 @@
 .card-container {
   transition: all 0.2s ease;
 }
+
+.cursor:hover {
+    cursor: pointer;
+}
+

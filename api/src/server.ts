@@ -1,7 +1,9 @@
 import cors from "@fastify/cors";
 import { config } from "dotenv";
 import Fastify from "fastify";
-import { userRoutes } from "./routes";
+import { cardsRoutes } from "./routes/cards";
+import { collectionRoutes } from "./routes/collection";
+import { userRoutes } from "./routes/user";
 config();
 
 const app = Fastify();
@@ -13,6 +15,8 @@ app.register(cors, {
 app.register(import("@fastify/sensible"));
 
 app.register(userRoutes);
+app.register(collectionRoutes);
+app.register(cardsRoutes);
 
 app.listen({ port: 3000 }, () => {
   console.log("🚀 Server running on http://localhost:3000");

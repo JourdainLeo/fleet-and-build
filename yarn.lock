@@ -3039,6 +3039,7 @@ __metadata:
     prettier: "npm:^3.5.3"
     prettier-plugin-organize-imports: "npm:^4.1.0"
     react-lazy-load-image-component: "npm:^1.6.3"
+    react-parallax-tilt: "npm:^1.7.289"
     typescript: "npm:~5.7.2"
     typescript-eslint: "npm:^8.28.0"
     zustand: "npm:^5.0.3"
@@ -4309,6 +4310,16 @@ __metadata:
     react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 10c0/0d0c597c880e4abe8b1c3d4820ae8a5b8bd7c5fdd75011aedfb07d0d0311c0c45b5c3984b58c9c64a96a4570dee43adb4f0065e4e7b034b68118e338ad1c0eba
+  languageName: node
+  linkType: hard
+
+"react-parallax-tilt@npm:^1.7.289":
+  version: 1.7.289
+  resolution: "react-parallax-tilt@npm:1.7.289"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/1da583cf71bc7d6dc615c872d3c523d07f6b2e759d204fd5d85c11c4edd74aefb1762b3034824a1de48d2a07125a37c50c715f67d77942dbd7ada7bee27288b9
   languageName: node
   linkType: hard
 

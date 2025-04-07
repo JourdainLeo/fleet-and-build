@@ -39,6 +39,7 @@
     "drizzle-typebox": "^0.3.1",
     "framer-motion": "^12.6.3",
     "react-lazy-load-image-component": "^1.6.3",
+    "react-parallax-tilt": "^1.7.289",
     "zustand": "^5.0.3"
   }
 }

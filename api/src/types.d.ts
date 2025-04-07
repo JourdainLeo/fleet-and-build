@@ -23,14 +23,14 @@ export interface FilterQuery {
   offset?: number;
   q?: string;
   pitch?: number;
-  pitch_operator?: string;
+  pitch_operator?: "=" | "<" | ">" | "<=" | ">=";
   order?: "asc" | "desc";
   defense?: number;
-  defense_operator?: string;
+  defense_operator?: "=" | "<" | ">" | "<=" | ">=";
   attack?: number;
-  attack_operator?: string;
+  attack_operator?: "=" | "<" | ">" | "<=" | ">=";
   cost?: number;
-  cost_operator?: string;
+  cost_operator?: "=" | "<" | ">" | "<=" | ">=";
   hero?: string;
   set?: string;
   type?: string;
