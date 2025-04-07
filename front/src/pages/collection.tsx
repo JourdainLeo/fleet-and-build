@@ -223,62 +223,59 @@ function Collection() {
                         ))}
                       </Flex>
                     </Flex>
-                    <MantineCard p={8}>
-                      <Flex
-                        gap={24}
-                        align={"center"}
-                        justify={"center"}
-                        flex={1}
-                      >
-                        <Action
-                          icon={<IconMinus />}
-                          onClick={async ({ api }) => {
-                            if (!current) return;
-                            await api.delete(
-                              "/user/:id/collection/:card_id",
-                              {
-                                id: 1,
-                                card_id: current.card_id,
-                              },
-                              (json) => {
-                                setCollection(json);
-                                const c = json.find(
-                                  (c) => c.card_id === current.card_id,
-                                );
-
-                                if (!c) {
-                                  close();
-                                } else {
-                                  setCurrent(c);
-                                }
-                              },
-                            );
-                          }}
-                        />
-                        <Text fw={600}>{current?.quantity}</Text>
-                        <Action
-                          icon={<IconPlus />}
-                          onClick={async ({ api }) => {
-                            if (!current) return;
-                            await api.put(
-                              "/user/:id/collection",
-                              { card_id: current.card_id },
-                              {
-                                id: 1,
-                              },
-                              (json) => {
-                                setCollection(json);
-                                setCurrent(
-                                  json.find(
+                    <Flex align={"flex-start"} justify={"center"}>
+                      <MantineCard p={8}>
+                        <Flex gap={24} align={"center"} justify={"center"}>
+                          <Action
+                            icon={<IconMinus />}
+                            onClick={async ({ api }) => {
+                              if (!current) return;
+                              await api.delete(
+                                "/user/:id/collection/:card_id",
+                                {
+                                  id: 1,
+                                  card_id: current.card_id,
+                                },
+                                (json) => {
+                                  setCollection(json);
+                                  const c = json.find(
                                     (c) => c.card_id === current.card_id,
-                                  ),
-                                );
-                              },
-                            );
-                          }}
-                        />
-                      </Flex>
-                    </MantineCard>
+                                  );
+
+                                  if (!c) {
+                                    close();
+                                  } else {
+                                    setCurrent(c);
+                                  }
+                                },
+                              );
+                            }}
+                          />
+                          <Text fw={600}>{current?.quantity}</Text>
+                          <Action
+                            icon={<IconPlus />}
+                            onClick={async ({ api }) => {
+                              if (!current) return;
+                              await api.put(
+                                "/user/:id/collection",
+                                { card_id: current.card_id },
+                                {
+                                  id: 1,
+                                },
+                                (json) => {
+                                  setCollection(json);
+                                  setCurrent(
+                                    json.find(
+                                      (c) => c.card_id === current.card_id,
+                                    ),
+                                  );
+                                },
+                              );
+                            }}
+                          />
+                        </Flex>
+                      </MantineCard>
+                    </Flex>
                   </Flex>
                   {!isTablet && (
                     <Text mt={-8} fz={12}>
