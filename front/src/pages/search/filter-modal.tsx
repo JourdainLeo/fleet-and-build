@@ -1,7 +1,20 @@
 import { Fusion, Hero, Rarity, Release, Type } from "@flesh-and-blood/types";
 import type { SelectProps } from "@mantine/core";
-import { Flex, Select as MantineSelect, Modal } from "@mantine/core";
+import {
+  Flex,
+  Image,
+  Select as MantineSelect,
+  Modal,
+  Text,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import {
+  IconBoxMultipleFilled,
+  IconFlameFilled,
+  IconStarFilled,
+  IconTagFilled,
+  IconUserFilled,
+} from "@tabler/icons-react";
 import React from "react";
 import { Action } from "../../components/Action";
 import CompareInput from "../../components/CompareInput";
@@ -55,41 +68,71 @@ function FilterModal({
       <Flex direction={"column"} gap={16} p={16}>
         <Flex gap={16} direction={isMobile ? "column" : "row"}>
           <Select
-            label="Hero"
+            label={
+              <Flex align={"center"} gap={4}>
+                <Image src={"hp.png"} w={14} h={14} />
+                <Text fz={14}>Hero</Text>
+              </Flex>
+            }
             data={heroes}
-            value={hero}
+            value={hero ?? null}
             onChange={(value) => setFilter("hero", value ?? undefined)}
           />
           <Select
-            label="Set"
+            label={
+              <Flex align={"center"} gap={4}>
+                <IconBoxMultipleFilled size={14} />
+                <Text fz={14}>Set</Text>
+              </Flex>
+            }
             data={sets}
-            value={set}
+            value={set ?? null}
             onChange={(value) => setFilter("set", value ?? undefined)}
           />
           <Select
-            label="Type"
+            label={
+              <Flex align={"center"} gap={4}>
+                <IconTagFilled size={14} />
+                <Text fz={14}>Type</Text>
+              </Flex>
+            }
             data={types}
-            value={type}
+            value={type ?? null}
             onChange={(value) => setFilter("type", value ?? undefined)}
           />
         </Flex>
         <Flex gap={16} direction={isMobile ? "column" : "row"}>
           <Select
-            label="Rarities"
+            label={
+              <Flex align={"center"} gap={4}>
+                <IconStarFilled size={14} />
+                <Text fz={14}>Rarity</Text>
+              </Flex>
+            }
             data={rarities}
-            value={rarity}
+            value={rarity ?? null}
             onChange={(value) => setFilter("rarity", value ?? undefined)}
           />
           <Select
-            label="Fusion"
+            label={
+              <Flex align={"center"} gap={4}>
+                <IconFlameFilled size={14} />
+                <Text fz={14}>Fusion</Text>
+              </Flex>
+            }
             data={fusions}
-            value={fusion}
+            value={fusion ?? null}
             onChange={(value) => setFilter("fusion", value ?? undefined)}
           />
           <Select
-            label="Artist"
+            label={
+              <Flex align={"center"} gap={4}>
+                <IconUserFilled size={14} />
+                <Text fz={14}>Artist</Text>
+              </Flex>
+            }
             data={artists}
-            value={artist}
+            value={artist ?? null}
             onChange={(value) => setFilter("artist", value ?? undefined)}
           />
         </Flex>

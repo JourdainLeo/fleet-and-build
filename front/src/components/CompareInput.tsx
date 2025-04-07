@@ -69,7 +69,7 @@ const CompareInput = React.memo(
                       ? "Yellow (2)"
                       : Number(value) === 3
                         ? "Blue (3)"
-                        : undefined
+                        : null
                 }
                 onChange={(v) => {
                   const val =
@@ -88,8 +88,7 @@ const CompareInput = React.memo(
               <NumberInput
                 min={0}
                 flex={2}
-                __clearable
-                placeholder="Pick value"
+                placeholder="Pick pitch"
                 value={value}
                 onChange={(v) => {
                   setFilter(k, Number(v));
