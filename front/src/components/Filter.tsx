@@ -63,6 +63,8 @@ function Filter({
   const order = useZustore((s) => s.order);
   const setFilter = useZustore((state) => state.setFilter);
 
+  console.log(pitch_operator, pitch);
+
   const activeFilters = {
     // Use to iterate over filters
     hero,
@@ -82,7 +84,6 @@ function Filter({
   };
 
   const filtersToDisplay = Object.entries(activeFilters).filter(
-    // Filter out undefined values
     ([_, value]) => value !== undefined,
   );
 
@@ -105,13 +106,9 @@ function Filter({
     setFilter("fusion", undefined);
     setFilter("artist", undefined);
     setFilter("pitch", undefined);
-    setFilter("pitch_operator", undefined);
     setFilter("defense", undefined);
-    setFilter("defense_operator", undefined);
     setFilter("attack", undefined);
-    setFilter("attack_operator", undefined);
     setFilter("cost", undefined);
-    setFilter("cost_operator", undefined);
     setFilter("order", "asc");
   }, []);
   const remove = useMediaQuery("(max-width: 800px)");
@@ -158,171 +155,175 @@ function Filter({
             </ActionIcon>
           )}
         </Flex>
-        <Flex justify={"space-between"} align={"center"}>
-          <Flex
-            component={motion.div}
-            wrap={"wrap"}
-            layout
-            style={{ flexGrow: 1, columnGap: 8, rowGap: 8 }}
-          >
-            {remove && (
+        {!remove && (
+          <Flex justify={"space-between"} align={"center"}>
+            <Flex
+              component={motion.div}
+              wrap={"wrap"}
+              layout
+              style={{ flexGrow: 1, columnGap: 8, rowGap: 8 }}
+            >
+              {remove && (
+                <ActionIcon
+                  variant={"subtle"}
+                  onClick={() => {
+                    setFilter("order", order === "asc" ? "desc" : "asc");
+                    setLoading(true);
+                    setPage(1);
+                    fetch({
+                      q: debounced,
+                      ...activeFilters,
+                      order: order === "asc" ? "desc" : "asc",
+                    });
+                  }}
+                >
+                  {order === "asc" ? (
+                    <IconSortAscending />
+                  ) : (
+                    <IconSortDescending />
+                  )}
+                </ActionIcon>
+              )}
+              {!remove && (
+                <AnimatePresence>
+                  {filtersToDisplay.map(([key, value]) => {
+                    if (
+                      key === "pitch" ||
+                      key === "defense" ||
+                      key === "attack" ||
+                      key === "cost"
+                    ) {
+                      const operatorKey = `${key}_operator`;
+                      const operatorValue =
+                        activeFilters[
+                          operatorKey as keyof typeof activeFilters
+                        ];
+
+                      return (
+                        operatorValue && (
+                          <motion.div
+                            key={key}
+                            layout
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5, x: -20 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <Badge
+                              size={"md"}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Flex gap={8} align={"center"}>
+                                {`${key.charAt(0).toUpperCase() + key.slice(1)} ${operatorValue} ${value}`}
+                                <ActionIcon
+                                  size={16}
+                                  onClick={() => setFilter(key, undefined)}
+                                >
+                                  <IconX />
+                                </ActionIcon>
+                              </Flex>
+                            </Badge>
+                          </motion.div>
+                        )
+                      );
+                    }
+
+                    if (key.includes("operator")) return null;
+
+                    return (
+                      <motion.div
+                        key={key}
+                        layout
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5, x: -20 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Badge
+                          size="md"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Flex align="center" gap={8}>
+                            {`${key.toUpperCase()}: ${value}`}
+                            <ActionIcon
+                              size={16}
+                              onClick={() => setFilter(key as any, undefined)}
+                            >
+                              <IconX />
+                            </ActionIcon>
+                          </Flex>
+                        </Badge>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              )}
+            </Flex>
+            <Flex align={"center"} justify={"center"}>
+              <ActionIcon variant={"subtle"}>
+                <IconSquare
+                  size={18}
+                  onClick={() => {
+                    setGrid({
+                      lg: 1.5,
+                      sm: 3,
+                      xs: 4,
+                      md: 3,
+                    });
+                  }}
+                />
+              </ActionIcon>
               <ActionIcon
                 variant={"subtle"}
                 onClick={() => {
-                  setFilter("order", order === "asc" ? "desc" : "asc");
-                  setLoading(true);
-                  setPage(1);
-                  fetch({
-                    q: debounced,
-                    ...activeFilters,
-                    order: order === "asc" ? "desc" : "asc",
-                  });
-                }}
-              >
-                {order === "asc" ? (
-                  <IconSortAscending />
-                ) : (
-                  <IconSortDescending />
-                )}
-              </ActionIcon>
-            )}
-            {!remove && (
-              <AnimatePresence>
-                {filtersToDisplay.map(([key, value]) => {
-                  if (
-                    key === "pitch" ||
-                    key === "defense" ||
-                    key === "attack" ||
-                    key === "cost"
-                  ) {
-                    const operatorKey = `${key}_operator`;
-                    const operatorValue =
-                      activeFilters[operatorKey as keyof typeof activeFilters];
-
-                    return (
-                      operatorValue && (
-                        <motion.div
-                          key={key}
-                          layout
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.5, x: -20 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <Badge
-                            size={"md"}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Flex gap={8} align={"center"}>
-                              {`${key.charAt(0).toUpperCase() + key.slice(1)} ${operatorValue} ${value}`}
-                              <ActionIcon
-                                size={16}
-                                onClick={() => setFilter(key, undefined)}
-                              >
-                                <IconX />
-                              </ActionIcon>
-                            </Flex>
-                          </Badge>
-                        </motion.div>
-                      )
-                    );
-                  }
-
-                  if (key.includes("operator")) return null;
-
-                  return (
-                    <motion.div
-                      key={key}
-                      layout
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.5, x: -20 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Badge
-                        size="md"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Flex align="center" gap={8}>
-                          {`${key.toUpperCase()}: ${value}`}
-                          <ActionIcon
-                            size={16}
-                            onClick={() => setFilter(key as any, undefined)}
-                          >
-                            <IconX />
-                          </ActionIcon>
-                        </Flex>
-                      </Badge>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            )}
-          </Flex>
-          <Flex align={"center"} justify={"center"}>
-            <ActionIcon variant={"subtle"}>
-              <IconSquare
-                size={18}
-                onClick={() => {
                   setGrid({
-                    lg: 1.5,
+                    lg: 2,
                     sm: 3,
                     xs: 4,
                     md: 3,
                   });
                 }}
-              />
-            </ActionIcon>
-            <ActionIcon
-              variant={"subtle"}
-              onClick={() => {
-                setGrid({
-                  lg: 2,
-                  sm: 3,
-                  xs: 4,
-                  md: 3,
-                });
-              }}
-            >
-              <Flex direction={"column"} align="center" justify={"center"}>
-                {Array.from({ length: 2 }).map((_, rowIndex) => (
-                  <Flex key={rowIndex} align="center" justify={"center"}>
-                    {Array.from({ length: 2 }).map((_, colIndex) => (
-                      <IconSquare key={colIndex} size={9} />
-                    ))}
-                  </Flex>
-                ))}
-              </Flex>
-            </ActionIcon>
-            <ActionIcon
-              variant={"subtle"}
-              onClick={() => {
-                setGrid({
-                  lg: 2.4,
-                  sm: 3,
-                  xs: 4,
-                  md: 3,
-                });
-              }}
-            >
-              <Flex direction={"column"} align="center" justify={"center"}>
-                {Array.from({ length: 3 }).map((_, rowIndex) => (
-                  <Flex key={rowIndex} align="center" justify={"center"}>
-                    {Array.from({ length: 3 }).map((_, colIndex) => (
-                      <IconSquare key={colIndex} size={6} />
-                    ))}
-                  </Flex>
-                ))}
-              </Flex>
-            </ActionIcon>
+              >
+                <Flex direction={"column"} align="center" justify={"center"}>
+                  {Array.from({ length: 2 }).map((_, rowIndex) => (
+                    <Flex key={rowIndex} align="center" justify={"center"}>
+                      {Array.from({ length: 2 }).map((_, colIndex) => (
+                        <IconSquare key={colIndex} size={9} />
+                      ))}
+                    </Flex>
+                  ))}
+                </Flex>
+              </ActionIcon>
+              <ActionIcon
+                variant={"subtle"}
+                onClick={() => {
+                  setGrid({
+                    lg: 2.4,
+                    sm: 3,
+                    xs: 4,
+                    md: 3,
+                  });
+                }}
+              >
+                <Flex direction={"column"} align="center" justify={"center"}>
+                  {Array.from({ length: 3 }).map((_, rowIndex) => (
+                    <Flex key={rowIndex} align="center" justify={"center"}>
+                      {Array.from({ length: 3 }).map((_, colIndex) => (
+                        <IconSquare key={colIndex} size={6} />
+                      ))}
+                    </Flex>
+                  ))}
+                </Flex>
+              </ActionIcon>
+            </Flex>
           </Flex>
-        </Flex>
+        )}
         <FilterModal opened={opened} close={close} />
       </MantineCard>
       {children}

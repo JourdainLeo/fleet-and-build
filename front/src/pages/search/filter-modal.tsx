@@ -3,6 +3,7 @@ import type { SelectProps } from "@mantine/core";
 import { Flex, Select as MantineSelect, Modal } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import React from "react";
+import { Action } from "../../components/Action";
 import CompareInput from "../../components/CompareInput";
 import { useZustore } from "../../services/zustore";
 
@@ -52,7 +53,7 @@ function FilterModal({
       size={isMobile ? "100%" : isTablet ? "100%" : "80%"}
     >
       <Flex direction={"column"} gap={16} p={16}>
-        <Flex gap={16}>
+        <Flex gap={16} direction={isMobile ? "column" : "row"}>
           <Select
             label="Hero"
             data={heroes}
@@ -72,7 +73,7 @@ function FilterModal({
             onChange={(value) => setFilter("type", value ?? undefined)}
           />
         </Flex>
-        <Flex gap={16}>
+        <Flex gap={16} direction={isMobile ? "column" : "row"}>
           <Select
             label="Rarities"
             data={rarities}
@@ -92,7 +93,7 @@ function FilterModal({
             onChange={(value) => setFilter("artist", value ?? undefined)}
           />
         </Flex>
-        <Flex gap={16} wrap="wrap">
+        <Flex gap={16} direction={isMobile ? "column" : "row"}>
           <CompareInput
             pitch
             value={pitch}
@@ -111,7 +112,8 @@ function FilterModal({
             icon={"pitch.png"}
             operator={"cost_operator"}
           />
-
+        </Flex>
+        <Flex gap={16} direction={isMobile ? "column" : "row"}>
           <CompareInput
             value={attack}
             label={"Attack"}
@@ -129,6 +131,24 @@ function FilterModal({
             icon={"def.png"}
             operator={"defense_operator"}
           />
+        </Flex>
+        <Flex justify={"flex-end"} gap={16}>
+          <Action
+            label={"Clear all"}
+            onClick={() => {
+              setFilter("hero", undefined);
+              setFilter("set", undefined);
+              setFilter("type", undefined);
+              setFilter("rarity", undefined);
+              setFilter("fusion", undefined);
+              setFilter("artist", undefined);
+              setFilter("pitch", undefined);
+              setFilter("defense", undefined);
+              setFilter("attack", undefined);
+              setFilter("cost", undefined);
+            }}
+          />
+          <Action label={"Close"} onClick={close} />
         </Flex>
       </Flex>
     </Modal>

@@ -50,7 +50,9 @@ const CompareInput = React.memo(
               data={["=", ">", "<", ">=", "<="]}
               value={operatorValue}
               onChange={(value) => {
-                setFilter(operator, value ?? "=");
+                if ([">", "<", ">=", "<=", "="].includes(value ?? "=")) {
+                  setFilter(operator, (value as any) ?? "=");
+                }
               }}
             />
 
@@ -65,12 +67,19 @@ const CompareInput = React.memo(
                     ? "Red (1)"
                     : Number(value) === 2
                       ? "Yellow (2)"
-                      : "Blue (3)"
+                      : Number(value) === 3
+                        ? "Blue (3)"
+                        : undefined
                 }
                 onChange={(v) => {
-                  if (!v) return;
-
-                  const val = v === "Red (1)" ? 1 : v === "Yellow (2)" ? 2 : 3;
+                  const val =
+                    v === "Red (1)"
+                      ? 1
+                      : v === "Yellow (2)"
+                        ? 2
+                        : v === "Blue (3)"
+                          ? 3
+                          : undefined;
 
                   setFilter("pitch", val);
                 }}
@@ -79,6 +88,7 @@ const CompareInput = React.memo(
               <NumberInput
                 min={0}
                 flex={2}
+                __clearable
                 placeholder="Pick value"
                 value={value}
                 onChange={(v) => {
