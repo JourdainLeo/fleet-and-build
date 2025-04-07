@@ -38,6 +38,7 @@ export const Action = (props: IAction) => {
         props.onClick({ api });
       }
     },
+    leftSection: props.icon,
     className:
       props.className && props.disabled
         ? props.disabledClassName
@@ -46,12 +47,15 @@ export const Action = (props: IAction) => {
         : props.className,
   };
 
+  console.log(props.label);
   return (
     <>
       {props.label ? (
         <Button {...p}>{props.label}</Button>
       ) : (
-        <ActionIcon {...p}>{props.icon}</ActionIcon>
+        <ActionIcon size={"lg"} {...p}>
+          {props.icon}
+        </ActionIcon>
       )}
     </>
   );

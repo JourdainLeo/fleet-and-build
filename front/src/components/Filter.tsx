@@ -2,7 +2,6 @@ import type { FilterQuery } from "@fleet-and-build/api";
 import {
   ActionIcon,
   Badge,
-  Button,
   Card,
   Flex,
   Card as MantineCard,
@@ -27,6 +26,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import FilterModal from "../pages/search/filter-modal";
 import { useZustore } from "../services/zustore";
+import { Action } from "./Action";
 
 function Filter({
   children,
@@ -114,125 +114,156 @@ function Filter({
     setFilter("cost_operator", undefined);
     setFilter("order", "asc");
   }, []);
-  const isTablet = useMediaQuery("(max-width: 1060px)");
+  const remove = useMediaQuery("(max-width: 800px)");
 
   return (
     <Flex h={"100%"} direction={"column"} pb={16}>
-      <MantineCard style={{ borderRadius: 0 }}>
-        <Flex mb={8} gap={16} align={"center"}>
+      <MantineCard style={{ borderRadius: 0, flexShrink: 0 }} pb={8}>
+        <Flex mb={8} gap={remove ? 8 : 16} align={"center"}>
           <TextInput
             flex={1}
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={"Search cards..."}
           />
-          <Button
-            leftSection={<IconSearch />}
+          <Action
+            icon={<IconSearch size={24} />}
+            label={remove ? "" : "Search"}
             onClick={() => {
               setLoading(true);
               fetch({ q: debounced, ...activeFilters, order: order });
             }}
-          >
-            Search
-          </Button>
+          />
 
-          <Button leftSection={<IconFilterFilled />} onClick={open}>
-            Filter
-          </Button>
-          <ActionIcon
-            variant={"subtle"}
-            onClick={() => {
-              setFilter("order", order === "asc" ? "desc" : "asc");
-              setLoading(true);
-              setPage(1);
-              fetch({
-                q: debounced,
-                ...activeFilters,
-                order: order === "asc" ? "desc" : "asc",
-              });
-            }}
-          >
-            {order === "asc" ? <IconSortAscending /> : <IconSortDescending />}
-          </ActionIcon>
+          <Action
+            icon={<IconFilterFilled />}
+            onClick={open}
+            label={remove ? "" : "Filter"}
+          />
+          {!remove && (
+            <ActionIcon
+              variant={"subtle"}
+              onClick={() => {
+                setFilter("order", order === "asc" ? "desc" : "asc");
+                setLoading(true);
+                setPage(1);
+                fetch({
+                  q: debounced,
+                  ...activeFilters,
+                  order: order === "asc" ? "desc" : "asc",
+                });
+              }}
+            >
+              {order === "asc" ? <IconSortAscending /> : <IconSortDescending />}
+            </ActionIcon>
+          )}
         </Flex>
         <Flex justify={"space-between"} align={"center"}>
-          <Flex gap="sm" component={motion.div} layout>
-            <AnimatePresence>
-              {filtersToDisplay.map(([key, value]) => {
-                if (
-                  key === "pitch" ||
-                  key === "defense" ||
-                  key === "attack" ||
-                  key === "cost"
-                ) {
-                  const operatorKey = `${key}_operator`;
-                  const operatorValue =
-                    activeFilters[operatorKey as keyof typeof activeFilters];
+          <Flex
+            component={motion.div}
+            wrap={"wrap"}
+            layout
+            style={{ flexGrow: 1, columnGap: 8, rowGap: 8 }}
+          >
+            {remove && (
+              <ActionIcon
+                variant={"subtle"}
+                onClick={() => {
+                  setFilter("order", order === "asc" ? "desc" : "asc");
+                  setLoading(true);
+                  setPage(1);
+                  fetch({
+                    q: debounced,
+                    ...activeFilters,
+                    order: order === "asc" ? "desc" : "asc",
+                  });
+                }}
+              >
+                {order === "asc" ? (
+                  <IconSortAscending />
+                ) : (
+                  <IconSortDescending />
+                )}
+              </ActionIcon>
+            )}
+            {!remove && (
+              <AnimatePresence>
+                {filtersToDisplay.map(([key, value]) => {
+                  if (
+                    key === "pitch" ||
+                    key === "defense" ||
+                    key === "attack" ||
+                    key === "cost"
+                  ) {
+                    const operatorKey = `${key}_operator`;
+                    const operatorValue =
+                      activeFilters[operatorKey as keyof typeof activeFilters];
+
+                    return (
+                      operatorValue && (
+                        <motion.div
+                          key={key}
+                          layout
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.5, x: -20 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <Badge
+                            size={"md"}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Flex gap={8} align={"center"}>
+                              {`${key.charAt(0).toUpperCase() + key.slice(1)} ${operatorValue} ${value}`}
+                              <ActionIcon
+                                size={16}
+                                onClick={() => setFilter(key, undefined)}
+                              >
+                                <IconX />
+                              </ActionIcon>
+                            </Flex>
+                          </Badge>
+                        </motion.div>
+                      )
+                    );
+                  }
+
+                  if (key.includes("operator")) return null;
 
                   return (
-                    operatorValue && (
-                      <motion.div
-                        key={key}
-                        layout
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5, x: -20 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <Badge
-                          size={"md"}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Flex gap={8} align={"center"}>
-                            {`${key.charAt(0).toUpperCase() + key.slice(1)} ${operatorValue} ${value}`}
-                            <ActionIcon
-                              size={16}
-                              onClick={() => setFilter(key, undefined)}
-                            >
-                              <IconX />
-                            </ActionIcon>
-                          </Flex>
-                        </Badge>
-                      </motion.div>
-                    )
-                  );
-                }
-
-                if (key.includes("operator")) return null;
-
-                return (
-                  <motion.div
-                    key={key}
-                    layout
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Badge
-                      size="md"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
+                    <motion.div
+                      key={key}
+                      layout
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5, x: -20 }}
+                      transition={{ duration: 0.2 }}
                     >
-                      <Flex align="center" gap={8}>
-                        {`${key.toUpperCase()}: ${value}`}
-                        <ActionIcon
-                          size={16}
-                          onClick={() => setFilter(key as any, undefined)}
-                        >
-                          <IconX />
-                        </ActionIcon>
-                      </Flex>
-                    </Badge>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+                      <Badge
+                        size="md"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Flex align="center" gap={8}>
+                          {`${key.toUpperCase()}: ${value}`}
+                          <ActionIcon
+                            size={16}
+                            onClick={() => setFilter(key as any, undefined)}
+                          >
+                            <IconX />
+                          </ActionIcon>
+                        </Flex>
+                      </Badge>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            )}
           </Flex>
           <Flex align={"center"} justify={"center"}>
             <ActionIcon variant={"subtle"}>
@@ -313,7 +344,7 @@ function Filter({
             withEdges
             size="md"
             radius="xl"
-            siblings={1}
+            siblings={remove ? 0 : 1}
             boundaries={1}
           />
         </Card>
