@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'FaB-Title';
+  src: url('/public/title.otf') format('opentype');
+}
+
 * {
   font-family: 'Cinzel', serif;
 }
@@ -7,6 +12,7 @@
   height: 100vh;
   overflow: hidden;
 }
+
 
 .card {
   position: relative;
@@ -119,3 +125,57 @@
     cursor: pointer;
 }
 
+ .deck-container {
+   width: 300px; /* Largeur de la div */
+   height: 200px; /* Hauteur de la div */
+   overflow: hidden; /* Masque le contenu qui dépasse */
+   position: relative; /* Position relative pour le conteneur */
+ }
+
+.deck-image {
+  width: 100%; /* Largeur de l'image à 100% de la div */
+  height: auto; /* Hauteur automatique pour garder le ratio */
+  position: absolute; /* Positionnement absolu */
+  top: 0; /* Positionner en haut */
+  left: 0; /* Positionner à gauche */
+  object-fit: cover; /* Remplissage de la div tout en gardant le ratio */
+  object-position: 0 -75px; /* Ajustez les valeurs en pixels */
+  transform: scale(1.05)
+}
+
+.card-deck-container {
+  width: 300px; /* Largeur de la div */
+  height: 200px; /* Hauteur de la div */
+  overflow: hidden; /* Masque le contenu qui dépasse */
+  position: relative; /* Position relative pour le conteneur */
+  border-radius: 16px;
+
+}
+
+.card-deck-image {
+  width: 100%; /* Largeur de l'image à 100% de la div */
+  height: auto; /* Hauteur automatique pour garder le ratio */
+  position: absolute; /* Positionnement absolu */
+  top: 0; /* Positionner en haut */
+  left: 0; /* Positionner à gauche */
+  object-fit: cover; /* Remplissage de la div tout en gardant le ratio */
+  object-position: 0 -17px; /* Ajustez les valeurs en pixels */
+  transform: scale(1)
+}
+
+.deck-card {
+  font-family: FaB-Title, serif;
+}
+
+.deck2 {
+  transition: all 0.2s ease;
+}
+
+.deck {
+  transition: all 0.2s ease;
+}
+
+.deck:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}
