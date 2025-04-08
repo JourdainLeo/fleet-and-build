@@ -1,29 +1,28 @@
+import type { Rarity } from "@flesh-and-blood/types";
 import { Badge } from "@mantine/core";
 
-function RarityBadge({ r }: { r: string }) {
+interface RarityBadgeProps {
+  r: Rarity;
+}
+
+const rarityColorMap: Record<Rarity, string> = {
+  Basic: "lightgray",
+  Common: "gray",
+  Token: "gray",
+  Rare: "blue",
+  "Super Rare": "pink",
+  Majestic: "red",
+  Legendary: "yellow",
+  Fabled: "orange",
+  Marvel: "violet",
+  Promo: "green",
+};
+
+function RarityBadge({ r }: RarityBadgeProps) {
+  const color = rarityColorMap[r] || "";
+
   return (
-    <Badge
-      className={"arrow-badge"}
-      color={
-        r === "Common" || r === "Token"
-          ? "gray"
-          : r === "Rare"
-            ? "blue"
-            : r === "Super Rare"
-              ? "pink"
-              : r === "Majestic"
-                ? "red"
-                : r === "Legendary"
-                  ? "yellow"
-                  : r === "Fabled"
-                    ? "orange"
-                    : r === "Marvel"
-                      ? "violet"
-                      : r === "Promo"
-                        ? "green"
-                        : ""
-      }
-    >
+    <Badge className="arrow-badge" color={color}>
       {r}
     </Badge>
   );
