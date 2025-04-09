@@ -123,7 +123,7 @@ export async function decksRoutes(fastify: FastifyInstance) {
   fastify.put<GetApiRoutes["/user/:id/deck/:deck_id"]>(
     "/user/:id/deck/:deck_id",
     async (request, reply) => {
-      const { id, deck_id } = request.params;
+      const { id } = request.params;
       const deck = request.body as DeckTable;
       const [user] = await db
         .select()
@@ -135,7 +135,8 @@ export async function decksRoutes(fastify: FastifyInstance) {
       }
 
       const decks = user.decks as User["decks"];
-      const deckIndex = decks.findIndex((deck) => deck.id === deck_id);
+      const deckIndex = decks.findIndex((d) => d.id === deck.id);
+
       if (deckIndex === -1) {
         return reply.status(404).send();
       }

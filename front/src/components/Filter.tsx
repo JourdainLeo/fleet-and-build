@@ -24,9 +24,9 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import FilterModal from "../pages/search/filter-modal";
 import { useZustore } from "../services/zustore";
 import { Action } from "./Action";
+import FilterModal from "./filter/FilterModal";
 
 function Filter({
   children,

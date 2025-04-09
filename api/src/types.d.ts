@@ -99,7 +99,7 @@ export interface PutApiRoutes {
   };
   "/user/:id/deck/:deck_id": {
     Params: { id: number; deck_id: number };
-    Reply: { count: number; results: DeckApi[] };
+    Reply: { count: number; results: DeckApi };
     Body: DeckTable;
   };
 }

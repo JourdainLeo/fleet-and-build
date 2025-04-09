@@ -1,9 +1,9 @@
 import { Divider, Flex, ScrollArea } from "@mantine/core";
 import { useZustore } from "../../services/zustore";
-import CardBanner from "./leftbar/card-banner";
-import DeckContainer from "./leftbar/deck-container";
-import LeftbarFooter from "./leftbar/leftbar-footer";
-import LeftbarHeader from "./leftbar/leftbar-header";
+import CardBanner from "./leftbar/CardBanner";
+import DeckContainer from "./leftbar/DeckContainer";
+import LeftbarFooter from "./leftbar/LeftbarFooter";
+import LeftbarHeader from "./leftbar/LeftbarHeader";
 
 function DeckLeftbar({ open }: { open: () => void }) {
   const deck = useZustore((state) => state.deck);

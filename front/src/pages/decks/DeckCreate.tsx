@@ -2,9 +2,9 @@ import { Flex, Image, Modal, TextInput } from "@mantine/core";
 import { IconDeviceGamepad, IconInputX } from "@tabler/icons-react";
 import { useState } from "react";
 import { Action } from "../../components/Action";
+import { heroes, Select } from "../../components/filter/FilterModal";
 import Label from "../../components/Label";
 import { useZustore } from "../../services/zustore";
-import { heroes, Select } from "../search/filter-modal";
 
 function DeckCreate({ opened, close }: { opened: boolean; close: () => void }) {
   const [hero, setHero] = useState("");

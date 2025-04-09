@@ -1,12 +1,11 @@
 import type { CollectionCard } from "@fleet-and-build/api";
-import { Grid, Image, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
+import CardGrid from "../components/CardGrid";
 import Filter from "../components/Filter";
 import { useApi } from "../services/api";
 import { useZustore } from "../services/zustore";
-import Details from "./collection/details";
-import LoadingCards from "./search/loading-cards";
+import Details from "./collection/Details";
 
 function Collection() {
   const api = useApi();
@@ -16,9 +15,7 @@ function Collection() {
   const setLoading = useZustore((state) => state.setLoading);
   const setCollection = useZustore((state) => state.setCollection);
   const setCount = useZustore((state) => state.setCount);
-  const grid = useZustore((state) => state.grid);
   const collection = useZustore((state) => state.collection);
-  const loading = useZustore((state) => state.loading);
 
   useEffect(() => {
     setLoading(true);
@@ -42,32 +39,15 @@ function Collection() {
           });
         }}
       >
-        <ScrollArea h={"100%"} mr={32} ml={32}>
-          <Grid gutter={16} align={"stretch"} p={16}>
-            {!loading ? (
-              collection.map((item) => (
-                <Grid.Col
-                  key={item.card_id}
-                  span={grid}
-                  className={"transition hover"}
-                  onClick={() => {
-                    open();
-                    setCurrent(item);
-                    setImageLoading(true);
-                  }}
-                >
-                  <Image
-                    src={item.image.normal}
-                    fit="contain"
-                    loading={"lazy"}
-                  />
-                </Grid.Col>
-              ))
-            ) : (
-              <LoadingCards />
-            )}
-          </Grid>
-        </ScrollArea>
+        <CardGrid
+          items={collection}
+          hover
+          onClick={(item) => {
+            open();
+            setCurrent(item);
+            setImageLoading(true);
+          }}
+        />
         <Details
           current={current}
           opened={opened}

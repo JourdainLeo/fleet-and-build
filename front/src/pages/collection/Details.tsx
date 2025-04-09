@@ -11,8 +11,8 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { Action } from "../../components/Action";
 import { useZustore } from "../../services/zustore";
-import RarityBadge from "./rarity-badge";
-import TiltCard from "./tilt-card";
+import RarityBadge from "./RarityBadge";
+import TiltCard from "./TiltCard";
 
 function Details({
   current,

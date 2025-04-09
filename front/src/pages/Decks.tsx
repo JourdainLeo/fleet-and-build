@@ -1,11 +1,11 @@
 import { Flex } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useApi } from "../services/api";
 import { useZustore } from "../services/zustore";
-import DeckCardGrid from "./decks/deck-card-grid";
-import DeckCreate from "./decks/deck-create";
-import DeckLeftbar from "./decks/deck-leftbar";
+import DeckCreate from "./decks/DeckCreate";
+import DeckLeftbar from "./decks/DeckLeftbar";
+import DeckSearch from "./decks/DeckSearch";
 
 const Decks = () => {
   const api = useApi();
@@ -13,18 +13,6 @@ const Decks = () => {
   const setCount = useZustore((state) => state.setCount);
   const setCards = useZustore((state) => state.setCards);
   const [opened, { open, close }] = useDisclosure();
-  const [hero, setHero] = useState("");
-  const [name, setName] = useState("");
-  const [format, setFormat] = useState<"Blitz" | "Classic Constructed">(
-    "Blitz",
-  );
-  const loading = useZustore((state) => state.loading);
-  const cards = useZustore((state) => state.cards);
-  const grid = useZustore((state) => state.grid);
-  const collection = useZustore((state) => state.collection);
-  const deck = useZustore((state) => state.deck);
-  const setDeck = useZustore((state) => state.setDeck);
-  const decks = useZustore((state) => state.decks);
   const setDecks = useZustore((state) => state.setDecks);
 
   useEffect(() => {
@@ -42,7 +30,7 @@ const Decks = () => {
   return (
     <Flex h={"100%"}>
       <DeckLeftbar open={open} />
-      <DeckCardGrid />
+      <DeckSearch />
       <DeckCreate opened={opened} close={close} />
     </Flex>
   );

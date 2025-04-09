@@ -2,7 +2,7 @@ import { useDraggable } from "@dnd-kit/core";
 import type { Card } from "@fleet-and-build/api";
 import { Image } from "@mantine/core";
 
-const CardDraggable = ({ card }: { card: Card }) => {
+const DraggableDemo = ({ card }: { card: Card }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: card.card_id,
   });
@@ -25,4 +25,4 @@ const CardDraggable = ({ card }: { card: Card }) => {
   );
 };
 
-export default CardDraggable;
+export default DraggableDemo;

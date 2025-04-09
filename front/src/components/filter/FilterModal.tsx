@@ -16,9 +16,9 @@ import {
   IconUserFilled,
 } from "@tabler/icons-react";
 import React from "react";
-import { Action } from "../../components/Action";
-import CompareInput from "../../components/CompareInput";
 import { useZustore } from "../../services/zustore";
+import { Action } from "../Action";
+import CompareInput from "../CompareInput";
 
 const sets = Object.values(Release).filter(
   (value) =>

@@ -1,7 +1,7 @@
 import { Flex, Grid, Image, Skeleton } from "@mantine/core";
 import { useZustore } from "../../services/zustore";
 
-function LoadingCards() {
+function LoadingGrid() {
   const grid = useZustore((state) => state.grid);
   const loading = useZustore((state) => state.loading);
 
@@ -23,4 +23,4 @@ function LoadingCards() {
   });
 }
 
-export default LoadingCards;
+export default LoadingGrid;
