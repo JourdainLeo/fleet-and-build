@@ -1,4 +1,13 @@
-import { Box, Divider, Flex, Image, ScrollArea, Text } from "@mantine/core";
+import {
+  Box,
+  Divider,
+  Flex,
+  Image,
+  Modal,
+  ScrollArea,
+  Text,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { Action } from "../components/Action";
 import Filter from "../components/Filter";
@@ -25,6 +34,7 @@ const Decks = () => {
   const setLoading = useZustore((state) => state.setLoading);
   const setCount = useZustore((state) => state.setCount);
   const setCards = useZustore((state) => state.setCards);
+  const [opened, { open, close }] = useDisclosure();
 
   useEffect(() => {
     setLoading(true);
@@ -48,6 +58,7 @@ const Decks = () => {
             <Text fw={600} fz={24}>
               My Decks
             </Text>
+            <Action label={"Create"} onClick={open} />
           </Flex>
         ) : (
           <Flex
@@ -150,6 +161,26 @@ const Decks = () => {
           <GridCards />
         </Filter>
       </Flex>
+      <Modal opened={opened} onClose={close}>
+        <Action
+          label={"create"}
+          onClick={({ api }) => {
+            api
+              .post(
+                "/user/:id/deck",
+                { id: 1 },
+                {
+                  name: "New Deck",
+                  hero: "Aurora",
+                  type: "Blitz",
+                },
+              )
+              .then((r) => {
+                console.log(r);
+              });
+          }}
+        />
+      </Modal>
     </Flex>
   );
 };

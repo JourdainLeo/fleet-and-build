@@ -1,4 +1,3 @@
-import type { Hero } from "@flesh-and-blood/types";
 import type { Static } from "@sinclair/typebox";
 import type {
   cardSchema,
@@ -10,7 +9,6 @@ import type {
 
 export type User = Static<typeof userSchema>;
 export type Card = Static<typeof cardSchema>;
-``;
 export type CollectionCard = Static<typeof collectionCardSchema>;
 export type DeckTable = Static<typeof DeckTableSchema>;
 export type DeckApi = Static<typeof DeckApiSchema>;
@@ -25,6 +23,17 @@ export interface PostApiRoutes {
       success: boolean;
       user: User;
     };
+    Params: { id: number };
+  };
+  "/user/:id/deck": {
+    Params: { id: number };
+    Reply: { count: number; results: DeckApi[] };
+    Body: {
+      name: string;
+      type: "Blitz" | "Classic Constructed";
+      hero: string;
+    };
+    Query: null;
   };
 }
 
@@ -92,19 +101,6 @@ export interface PutApiRoutes {
     Params: { id: number; deck_id: number };
     Reply: { count: number; results: DeckApi[] };
     Body: DeckTable;
-  };
-}
-
-export interface PostApiRoutes {
-  "/user/:id/deck": {
-    Params: { id: number; deck_id: number };
-    Reply: { count: number; results: DeckApi[] };
-    Body: {
-      name: string;
-      type: "Blitz" | "Classic Constructed";
-      hero: Hero;
-    };
-    Query: null;
   };
 }
 

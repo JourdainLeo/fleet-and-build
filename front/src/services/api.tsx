@@ -47,9 +47,17 @@ export class IApi {
 
   async post<T extends keyof PostApiRoutes>(
     route: T,
+    params: PostApiRoutes[T]["Params"],
     body: PostApiRoutes[T]["Body"],
   ): Promise<PostApiRoutes[T]["Reply"]> {
-    const res = await fetch(`${BASE_URL}${route}`, {
+    const urlPath = route.replace(/:(\w+)/g, (_, key) => {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        return encodeURIComponent(String(params[key as keyof typeof params]));
+      }
+      throw new Error(`Missing parameter: ${key}`);
+    });
+
+    const res = await fetch(`${BASE_URL}${urlPath}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

@@ -72,7 +72,7 @@ export async function decksRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const { id } = request.params;
       const deck = request.body as DeckApi;
-
+      deck.id = Math.floor(Math.random() * 1000000);
       const [user] = await db
         .select()
         .from(usersTable)
@@ -154,7 +154,7 @@ export async function decksRoutes(fastify: FastifyInstance) {
   );
 
   fastify.delete<DeleteApiRoutes["/user/:id/deck/:deck_id"]>(
-    "/user/:id/collection/:card_id",
+    "/user/:id/deck/:card_id",
     async (request, reply) => {
       const { id, deck_id } = request.params;
 
