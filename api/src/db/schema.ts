@@ -40,6 +40,7 @@ export const DeckTableSchema = Type.Object({
   name: Type.String(),
   hero: Type.String(),
   type: Type.String(),
+  image: Type.String(),
   cards: UserCollectionSchema,
 });
 
@@ -69,6 +70,7 @@ export const DeckApiSchema = Type.Object({
   id: Type.Integer(),
   name: Type.String(),
   hero: Type.String(),
+  image: Type.String(),
   type: Type.String(),
   cards: Type.Array(collectionCardSchema),
 });

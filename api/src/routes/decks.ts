@@ -1,8 +1,9 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, arrayOverlaps, eq, inArray } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import { db } from "../db";
 import { cardsTable, usersTable } from "../db/table";
 import type {
+  Card,
   CollectionCard,
   DeckApi,
   DeckTable,
@@ -29,37 +30,44 @@ export async function decksRoutes(fastify: FastifyInstance) {
 
       const decks = user.decks as User["decks"];
       const results: DeckApi[] = [];
-      decks.map(async (deck) => {
-        if (!deck) {
-          return reply.status(404).send();
-        }
+      await Promise.all(
+        decks.map(async (deck) => {
+          if (!deck) {
+            return reply.status(404).send();
+          }
 
-        const cardIds = deck.cards.map((item) => item.card_id);
+          const cardIds = deck.cards.map((item) => item.card_id);
 
-        const quantityMap = deck.cards.reduce<{ [key: string]: number }>(
-          (acc, item) => {
-            acc[item.card_id] = item.quantity;
-            return acc;
-          },
-          {},
-        );
+          const quantityMap = deck.cards.reduce<{ [key: string]: number }>(
+            (acc, item) => {
+              acc[item.card_id] = item.quantity;
+              return acc;
+            },
+            {},
+          );
 
-        const where = [inArray(cardsTable.card_id, cardIds)];
+          const where = [inArray(cardsTable.card_id, cardIds)];
 
-        const cards = await db
-          .select()
-          .from(cardsTable)
-          .where(and(...where));
+          const cards = await db
+            .select()
+            .from(cardsTable)
+            .where(and(...where));
 
-        const result = cards.map((card) => {
-          return {
-            ...card,
-            quantity: quantityMap[card.card_id] || 0,
-          };
-        });
-        results.push({ ...deck, cards: result as CollectionCard[] });
-      });
+          const result = cards.map((card) => {
+            return {
+              ...card,
+              quantity: quantityMap[card.card_id] || 0,
+            };
+          });
+          results.push({ ...deck, cards: result as CollectionCard[] });
 
+          console.log("current ", deck);
+          console.log("res ", result);
+          console.log("push ", { ...deck, cards: result as CollectionCard[] });
+        }),
+      );
+
+      console.log("results ", results);
       return reply.send({
         count: results.length,
         results: results,
@@ -72,15 +80,32 @@ export async function decksRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const { id } = request.params;
       const deck = request.body as DeckApi;
+      deck.cards = [];
       deck.id = Math.floor(Math.random() * 1000000);
       const [user] = await db
         .select()
         .from(usersTable)
         .where(eq(usersTable.id, id));
 
+      // get from card table hero where legalName contains deck.hero AND card.type contains "Hero"
+      const card = (await db
+        .select()
+        .from(cardsTable)
+        .where(
+          and(
+            arrayOverlaps(cardsTable.legalHeroes, [deck.hero]),
+            eq(cardsTable.life, deck.type === "Blitz" ? 20 : 40),
+          ),
+        )) as unknown as Card[];
+
       if (!user) {
         return reply.status(404).send();
       }
+
+      if (!card) {
+        return reply.status(404).send();
+      }
+      deck.image = card[0].image.normal;
 
       const decks = user.decks as User["decks"];
 

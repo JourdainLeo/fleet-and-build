@@ -47,7 +47,6 @@ export const Action = (props: IAction) => {
         : props.className,
   };
 
-  console.log(props.label);
   return (
     <>
       {props.label ? (

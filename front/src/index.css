@@ -139,7 +139,7 @@
   top: 0; /* Positionner en haut */
   left: 0; /* Positionner à gauche */
   object-fit: cover; /* Remplissage de la div tout en gardant le ratio */
-  object-position: 0 -75px; /* Ajustez les valeurs en pixels */
+  object-position: 0 -70px; /* Ajustez les valeurs en pixels */
   transform: scale(1.05)
 }
 
@@ -160,7 +160,7 @@
   left: 0; /* Positionner à gauche */
   object-fit: cover; /* Remplissage de la div tout en gardant le ratio */
   object-position: 0 -17px; /* Ajustez les valeurs en pixels */
-  transform: scale(1)
+  transform: scale(2)
 }
 
 .deck-card {
@@ -178,4 +178,27 @@
 .deck:hover {
     cursor: pointer;
     transform: scale(1.05);
+}
+
+
+.deck-card-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.deck-hover-bar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 6px 8px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.deck-card-container:hover .deck-hover-bar {
+  opacity: 1;
 }

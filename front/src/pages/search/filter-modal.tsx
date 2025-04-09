@@ -26,7 +26,7 @@ const sets = Object.values(Release).filter(
     !value.toLowerCase().includes("1st strike"),
 );
 
-const heroes = Object.values(Hero);
+export const heroes = Object.values(Hero);
 const rarities = Object.values(Rarity);
 const fusions = Object.values(Fusion);
 const types = Object.values(Type);
@@ -198,20 +198,22 @@ function FilterModal({
   );
 }
 
-const Select = React.memo(({ label, data, value, onChange }: SelectProps) => {
-  const l = typeof label === "string" ? label.toLowerCase() : "";
-  return (
-    <MantineSelect
-      flex={1}
-      label={label}
-      placeholder={"Pick " + l}
-      data={data}
-      value={value}
-      clearable
-      onChange={onChange}
-    />
-  );
-});
+export const Select = React.memo(
+  ({ label, data, value, onChange }: SelectProps) => {
+    const l = typeof label === "string" ? label.toLowerCase() : "";
+    return (
+      <MantineSelect
+        flex={1}
+        label={label}
+        placeholder={"Pick " + l}
+        data={data}
+        value={value}
+        clearable
+        onChange={onChange}
+      />
+    );
+  },
+);
 
 const artists = [
   "AOJI Maiko",

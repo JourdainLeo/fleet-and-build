@@ -44,24 +44,18 @@ export interface FabApiCard {
 }
 
 function enrichCard(baseCard: FabApiCard, index: number): any {
-  const card_id = baseCard.card_id
-    .replace("-1", "-red")
-    .replace("-2", "-yellow")
-    .replace("-3", "-blue")
-    .replace("brush-of-heavens-rites", "brush-of-heavenly-rites");
-
   const enrichedMap = new Map<string, FabCard>();
   for (const c of enrichedCards) {
     enrichedMap.set(c.cardIdentifier, c);
   }
 
   const found = enrichedCards.slice(index).find((c) => {
-    console.log(
-      `Searching for ${card_id} in ${c.cardIdentifier}`,
-      card_id.includes(c.cardIdentifier),
-    );
-    if (card_id.includes(c.cardIdentifier)) {
-      return c;
+    const match = baseCard.image.normal.match(/\/([^/]+)\.webp$/);
+    const result = match ? match[1] : null;
+    if (result) {
+      if (c.setIdentifiers.some((id) => result.includes(id))) {
+        return c;
+      }
     }
   });
 
@@ -97,7 +91,7 @@ function enrichCard(baseCard: FabApiCard, index: number): any {
     };
   }
 
-  if (card_id === "dragons-of-legend") {
+  if (baseCard.card_id.includes("dragons-of-legend")) {
     return {
       card_id: baseCard.card_id,
       name: baseCard.name,
@@ -124,7 +118,7 @@ function enrichCard(baseCard: FabApiCard, index: number): any {
     };
   }
 
-  if (card_id === "placeholder-equipment") {
+  if (baseCard.card_id.includes("placeholder-equipment")) {
     return {
       card_id: baseCard.card_id,
       name: baseCard.name,
@@ -151,7 +145,7 @@ function enrichCard(baseCard: FabApiCard, index: number): any {
     };
   }
 
-  throw new Error(`Card not found: ${baseCard.card_id} (${card_id})`);
+  throw new Error(`Card not found: ${baseCard.card_id}`);
 }
 
 async function fetchAllCards() {
