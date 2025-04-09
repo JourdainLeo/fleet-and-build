@@ -1,5 +1,6 @@
 import { Box, Divider, Flex, Image, ScrollArea, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { Action } from "../components/Action";
 import Filter from "../components/Filter";
 import { useApi } from "../services/api";
 import { useZustore } from "../services/zustore";
@@ -124,6 +125,17 @@ const Decks = () => {
                 ))}
           </Flex>
         </ScrollArea>
+        <Divider orientation={"horizontal"} w={"100%"} />
+        <Flex
+          p={8}
+          style={{ backgroundColor: "black" }}
+          justify={"flex-end"}
+          onClick={() => {
+            setDeck(null);
+          }}
+        >
+          {deck ? <Action label={"Done"} /> : <Action label={"Create"} />}
+        </Flex>
       </Flex>
       <Flex flex={1}>
         <Filter

@@ -1,9 +1,19 @@
+import type { Hero } from "@flesh-and-blood/types";
 import type { Static } from "@sinclair/typebox";
-import type { cardSchema, collectionCardSchema, userSchema } from "./db/schema";
+import type {
+  cardSchema,
+  collectionCardSchema,
+  DeckApiSchema,
+  DeckTableSchema,
+  userSchema,
+} from "./db/schema";
 
 export type User = Static<typeof userSchema>;
 export type Card = Static<typeof cardSchema>;
+``;
 export type CollectionCard = Static<typeof collectionCardSchema>;
+export type DeckTable = Static<typeof DeckTableSchema>;
+export type DeckApi = Static<typeof DeckApiSchema>;
 
 export interface PostApiRoutes {
   "/user": {
@@ -55,6 +65,16 @@ export interface GetApiRoutes {
     Reply: { count: number; results: Card[] };
     Query: FilterQuery;
   };
+  "/user/:id/decks": {
+    Params: { id: number };
+    Reply: { count: number; results: DeckApi[] };
+    Query: null;
+  };
+  "/user/:id/deck/:deck_id": {
+    Params: { id: number; deck_id: number };
+    Reply: { count: number; results: DeckApi };
+    Query: null;
+  };
 }
 
 export interface PutApiRoutes {
@@ -68,11 +88,34 @@ export interface PutApiRoutes {
     Body: { card_id: string };
     Reply: CollectionCard[];
   };
+  "/user/:id/deck/:deck_id": {
+    Params: { id: number; deck_id: number };
+    Reply: { count: number; results: DeckApi[] };
+    Body: DeckTable;
+  };
+}
+
+export interface PostApiRoutes {
+  "/user/:id/deck": {
+    Params: { id: number; deck_id: number };
+    Reply: { count: number; results: DeckApi[] };
+    Body: {
+      name: string;
+      type: "Blitz" | "Classic Constructed";
+      hero: Hero;
+    };
+    Query: null;
+  };
 }
 
 export interface DeleteApiRoutes {
   "/user/:id/collection/:card_id": {
     Params: { id: number; card_id: string };
     Reply: CollectionCard[];
+  };
+  "/user/:id/deck/:deck_id": {
+    Params: { id: number; deck_id: number };
+    Reply: { count: number; results: DeckApi[] };
+    Query: null;
   };
 }

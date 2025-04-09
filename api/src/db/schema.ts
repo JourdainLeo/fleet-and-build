@@ -35,8 +35,17 @@ export const CardOtherSchema = Type.Object({
   typebox: Type.String(),
 });
 
+export const DeckTableSchema = Type.Object({
+  id: Type.Integer(),
+  name: Type.String(),
+  hero: Type.String(),
+  type: Type.String(),
+  cards: UserCollectionSchema,
+});
+
 export const userSchema = createSelectSchema(usersTable, {
   collection: UserCollectionSchema,
+  decks: Type.Array(DeckTableSchema),
 });
 
 export const cardSchema = createSelectSchema(cardsTable, {
@@ -54,4 +63,12 @@ export const collectionCardSchema = Type.Object({
   subtype: Type.Array(Type.Enum(Subtype)),
   legalHeroes: Type.Array(Type.Enum(Hero)),
   legalFormats: Type.Array(Type.Enum(Format)),
+});
+
+export const DeckApiSchema = Type.Object({
+  id: Type.Integer(),
+  name: Type.String(),
+  hero: Type.String(),
+  type: Type.String(),
+  cards: Type.Array(collectionCardSchema),
 });

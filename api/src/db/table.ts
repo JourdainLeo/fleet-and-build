@@ -5,6 +5,7 @@ export const usersTable = pgTable("users", {
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   collection: jsonb("collection").notNull(),
+  decks: jsonb("decks").notNull(),
 });
 
 export const cardsTable = pgTable("cards", {

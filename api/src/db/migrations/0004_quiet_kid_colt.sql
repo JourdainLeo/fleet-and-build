@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "decks" jsonb NOT NULL;

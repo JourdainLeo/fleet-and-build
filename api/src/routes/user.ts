@@ -39,6 +39,7 @@ export async function userRoutes(fastify: FastifyInstance) {
         name: user.name,
         email: user.email,
         collection: JSON.stringify([]),
+        decks: JSON.stringify([]),
       })
       .returning();
 

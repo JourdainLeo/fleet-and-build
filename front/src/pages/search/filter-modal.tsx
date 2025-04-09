@@ -65,7 +65,7 @@ function FilterModal({
       radius={16}
       size={isMobile ? "100%" : isTablet ? "100%" : "80%"}
     >
-      <Flex direction={"column"} gap={16} p={16}>
+      <Flex direction={"column"} gap={16} p={16} pb={0}>
         <Flex gap={16} direction={isMobile ? "column" : "row"}>
           <Select
             label={
