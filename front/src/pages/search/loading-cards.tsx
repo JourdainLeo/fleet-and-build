@@ -7,7 +7,7 @@ function LoadingCards() {
 
   return Array.from({ length: 50 }).map((_, index) => {
     return (
-      <Grid.Col key={index} span={grid} className="card-container">
+      <Grid.Col key={index} span={grid} className="transition">
         <Flex className="card">
           <Skeleton visible={loading} animate>
             <Image

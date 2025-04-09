@@ -16,7 +16,7 @@ function GridCards() {
       <Grid gutter={16} align={"stretch"} p={16}>
         {!loading ? (
           cards.map((item) => (
-            <Grid.Col key={item.card_id} span={grid} className="card-container">
+            <Grid.Col key={item.card_id} span={grid} className="transition">
               <Flex className="card">
                 <Image
                   src={item.image.normal}

@@ -1,4 +1,4 @@
-import type { Card, CollectionCard, User } from "@fleet-and-build/api";
+import type { Card, CollectionCard, DeckApi, User } from "@fleet-and-build/api";
 import { create } from "zustand";
 
 interface StoreState {
@@ -16,6 +16,12 @@ interface StoreState {
 
   loading: boolean;
   setLoading: (b: boolean) => void;
+
+  decks: DeckApi[];
+  setDecks: (b: DeckApi[]) => void;
+
+  deck: DeckApi | null;
+  setDeck: (b: DeckApi | null) => void;
 
   q: string;
   setQ: (q: string) => void;
@@ -96,6 +102,12 @@ export const useZustore = create<StoreState>((set, get) => ({
 
   q: "",
   setQ: (q) => set({ q }),
+
+  decks: [],
+  setDecks: (decks) => set({ decks }),
+
+  deck: null,
+  setDeck: (deck) => set({ deck }),
 
   debounced: "", // you can update this from outside (see below)
 

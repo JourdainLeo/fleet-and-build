@@ -49,7 +49,7 @@ function Collection() {
                 <Grid.Col
                   key={item.card_id}
                   span={grid}
-                  className={"collection-card"}
+                  className={"transition hover"}
                   onClick={() => {
                     open();
                     setCurrent(item);

@@ -1,6 +1,7 @@
+/* Common CSS */
 @font-face {
   font-family: 'FaB-Title';
-  src: url('/public/title.otf') format('opentype');
+  src: url('/public/fonts/fab-title.otf') format('opentype');
 }
 
 * {
@@ -13,45 +14,24 @@
   overflow: hidden;
 }
 
+.transition {
+  transition: all 0.2s ease;
+}
 
-.card {
-  position: relative;
-  overflow: hidden;
+.hover:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.cursor:hover {
   cursor: pointer;
 }
 
-.hover-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 20%;
-  background-color: rgba(0, 0, 0, 0.7);
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-  justify-content: center;
-  align-items: center;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
+.fab-font {
+  font-family: FaB-Title, serif;
 }
 
-.card:hover .hover-bar {
-  transform: translateY(0);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
+/* Navbar */
 .btn {
   position: relative;
   height: 75px;
@@ -102,13 +82,43 @@
   border-bottom: 1px solid white;
 }
 
-.collection-card {
-  transition: all 0.2s ease;
+/* Card CSS */
+.card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
 }
 
-.collection-card:hover {
-  cursor: pointer;
-  transform: scale(1.05);
+.hover-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.card:hover .hover-bar {
+  transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .card-text img {
@@ -121,84 +131,85 @@
   transition: all 0.2s ease;
 }
 
-.cursor:hover {
-    cursor: pointer;
+/* Deck Container */
+.deck-container {
+  width: 300px;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
 }
 
- .deck-container {
-   width: 300px; /* Largeur de la div */
-   height: 200px; /* Hauteur de la div */
-   overflow: hidden; /* Masque le contenu qui dépasse */
-   position: relative; /* Position relative pour le conteneur */
- }
-
 .deck-image {
-  width: 100%; /* Largeur de l'image à 100% de la div */
-  height: auto; /* Hauteur automatique pour garder le ratio */
-  position: absolute; /* Positionnement absolu */
-  top: 0; /* Positionner en haut */
-  left: 0; /* Positionner à gauche */
-  object-fit: cover; /* Remplissage de la div tout en gardant le ratio */
-  object-position: 0 -70px; /* Ajustez les valeurs en pixels */
+  width: 100%;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  object-position: 0 -70px;
   transform: scale(1.05)
 }
 
-.card-deck-container {
-  width: 300px; /* Largeur de la div */
-  height: 200px; /* Hauteur de la div */
-  overflow: hidden; /* Masque le contenu qui dépasse */
-  position: relative; /* Position relative pour le conteneur */
-  border-radius: 16px;
-
-}
-
-.card-deck-image {
-  width: 100%; /* Largeur de l'image à 100% de la div */
-  height: auto; /* Hauteur automatique pour garder le ratio */
-  position: absolute; /* Positionnement absolu */
-  top: 0; /* Positionner en haut */
-  left: 0; /* Positionner à gauche */
-  object-fit: cover; /* Remplissage de la div tout en gardant le ratio */
-  object-position: 0 -17px; /* Ajustez les valeurs en pixels */
-  transform: scale(2)
-}
-
-.deck-card {
-  font-family: FaB-Title, serif;
-}
-
-.deck2 {
-  transition: all 0.2s ease;
-}
-
-.deck {
-  transition: all 0.2s ease;
-}
-
-.deck:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-}
-
-
+/* Deck card banner (deck card list) */
 .deck-card-container {
   position: relative;
   overflow: hidden;
 }
 
-.deck-hover-bar {
+.deck-card-hover-bar {
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding: 6px 8px;
   display: flex;
-  justify-content: center;
-  gap: 12px;
+  left: 50%;
+  z-index: 1000;
   background: rgba(0, 0, 0, 0.6);
   opacity: 0;
+  border-radius: 16px;
+  transform: translateX(-50%);
   transition: opacity 0.2s ease;
+  justify-content: space-between;
+  padding: 4px 7px;
 }
 
-.deck-card-container:hover .deck-hover-bar {
+.deck-card-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+  text-align: center;
+  color: black;
+}
+
+.deck-card-quantity {
+  position: absolute;
+  top: 14px;
+  right: 49px;
+  font-weight: 600;
+  background: rgba(0,0,0,1);
+  color: white;
+  border-radius: 8px;
+  width: 24px;
+  text-align: center;
+}
+
+.deck-card-pitch {
+    position: absolute;
+    top: 10px;
+    right: 7px;
+    font-size: 18px;
+    font-weight: 600;
+    color: black;
+    text-align: center;
+    width: 32px;
+}
+
+.deck-card-container:hover .deck-card-hover-bar {
   opacity: 1;
+}
+
+.deck-leftbar {
+  width: 350px;
+  height: 100%;
+  flex-direction: column;
 }
