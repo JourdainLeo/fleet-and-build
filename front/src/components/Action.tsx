@@ -6,6 +6,7 @@ import type {
   MantineStyleProp,
 } from "@mantine/core";
 import { ActionIcon, Button } from "@mantine/core";
+import type { MouseEvent } from "react";
 import React from "react";
 import { useApi } from "../services/api";
 import type { IServices } from "../services/model";
@@ -13,7 +14,10 @@ import type { IServices } from "../services/model";
 interface IAction {
   className?: string;
   style?: MantineStyleProp;
-  onClick?: (k: IServices) => void;
+  onClick?: (
+    k: IServices,
+    event: MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => void;
   label?: string;
   icon?: React.ReactNode;
   loading?: boolean;
@@ -33,9 +37,9 @@ export const Action = (props: IAction) => {
 
   const p = {
     ...props,
-    onClick: () => {
+    onClick: (event: any) => {
       if (props.onClick) {
-        props.onClick({ api });
+        props.onClick({ api }, event);
       }
     },
     leftSection: props.icon,

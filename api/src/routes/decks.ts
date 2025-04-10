@@ -180,7 +180,7 @@ export async function decksRoutes(fastify: FastifyInstance) {
   );
 
   fastify.delete<DeleteApiRoutes["/user/:id/deck/:deck_id"]>(
-    "/user/:id/deck/:card_id",
+    "/user/:id/deck/:deck_id",
     async (request, reply) => {
       const { id, deck_id } = request.params;
 
@@ -188,19 +188,22 @@ export async function decksRoutes(fastify: FastifyInstance) {
         .select()
         .from(usersTable)
         .where(eq(usersTable.id, id));
+      console.log("eee111");
 
       if (!user) {
         return reply.status(404).send();
       }
 
       const decks = user.decks as User["decks"];
-      const deckIndex = decks.findIndex((deck) => deck.id === deck_id);
+      const deckIndex = decks.findIndex((deck) => deck.id === Number(deck_id));
 
+      console.log("eeee", Number(deck_id), deck_id, request.params, deckIndex);
       if (deckIndex === -1) {
         return reply.status(404).send();
       }
 
       decks.splice(deckIndex, 1);
+      console.log("eeee22");
 
       await db
         .update(usersTable)

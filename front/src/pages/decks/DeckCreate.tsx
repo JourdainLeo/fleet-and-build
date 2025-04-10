@@ -25,6 +25,7 @@ function DeckCreate({ opened, close }: { opened: boolean; close: () => void }) {
       <Flex direction={"column"} gap={16}>
         <TextInput
           placeholder={"Deck Name"}
+          maxLength={24}
           label={
             <Label
               text={"Name"}

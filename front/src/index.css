@@ -172,27 +172,6 @@
   padding: 4px 7px;
 }
 
-.deck-card-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -40%);
-  text-align: center;
-  color: black;
-}
-
-.deck-card-quantity {
-  position: absolute;
-  top: 14px;
-  right: 49px;
-  font-weight: 600;
-  background: rgba(0,0,0,1);
-  color: white;
-  border-radius: 8px;
-  width: 24px;
-  text-align: center;
-}
-
 .deck-card-pitch {
     position: absolute;
     top: 10px;
@@ -213,3 +192,69 @@
   height: 100%;
   flex-direction: column;
 }
+
+.deck-card-quantity {
+  position: absolute;
+  top: 13px;
+  right: 50px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 1);
+  color: white;
+  border-radius: 999px;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  line-height: 24px;
+  font-size: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.25s ease;
+  z-index: 2;
+  gap: 0;
+  overflow: hidden;
+}
+
+.deck-card-quantity:hover {
+  width: 80px;
+  justify-content: space-between;
+  padding: 0 8px;
+  gap: 6px;
+}
+
+/* Boutons + / - */
+.deck-card-quantity .quantity-btn {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.deck-card-quantity:hover .quantity-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Le nom de la carte */
+.deck-card-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+  color: black;
+  text-align: center;
+  z-index: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* 👉 Disparition du texte UNIQUEMENT quand on hover .deck-card-quantity */
+.deck-card-quantity:hover ~ .deck-card-text {
+  opacity: 0;
+}
+
