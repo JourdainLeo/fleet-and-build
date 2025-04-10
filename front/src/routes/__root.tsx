@@ -1,13 +1,14 @@
+import { Combobox } from "@mantine/core";
 import {
   createRootRoute,
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
 import App from "../App";
-import Collection from "../pages/collection";
-import Decks from "../pages/decks";
-import Home from "../pages/home";
-import Search from "../pages/search";
+import Collection from "../pages/Collection";
+import Decks from "../pages/Decks";
+import Home from "../pages/Home";
+import Search = Combobox.Search;
 
 const rootRoute = createRootRoute({
   component: App,
