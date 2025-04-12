@@ -49,7 +49,8 @@ export class IApi {
     route: T,
     params: PostApiRoutes[T]["Params"],
     body: PostApiRoutes[T]["Body"],
-  ): Promise<PostApiRoutes[T]["Reply"]> {
+    callback: (json: PostApiRoutes[T]["Reply"]) => void,
+  ): Promise<void> {
     const urlPath = route.replace(/:(\w+)/g, (_, key) => {
       if (Object.prototype.hasOwnProperty.call(params, key)) {
         return encodeURIComponent(String(params[key as keyof typeof params]));
@@ -64,10 +65,21 @@ export class IApi {
     });
 
     if (!res.ok) {
-      throw new Error(`Error: ${res.status}`);
+      notifications.show({
+        message: "Error creating deck: 404",
+        color: "red",
+        position: "bottom-right",
+      });
+      return;
     }
 
-    return res.json();
+    notifications.show({
+      message: "Deck created!",
+      color: "green",
+      position: "bottom-right",
+    });
+
+    callback(await res.json());
   }
 
   async put<T extends keyof PutApiRoutes>(
@@ -91,7 +103,9 @@ export class IApi {
 
     if (!res.ok) {
       notifications.show({
-        message: "Error adding card: 404",
+        message: url.includes("deck")
+          ? "Error editing deck!"
+          : "Error adding card!",
         color: "red",
         position: "bottom-right",
       });
@@ -99,7 +113,7 @@ export class IApi {
     }
 
     notifications.show({
-      message: "Card added!",
+      message: url.includes("deck") ? "Deck edited!" : "Card added!",
       color: "green",
       position: "bottom-right",
     });
@@ -125,7 +139,9 @@ export class IApi {
 
     if (!res.ok) {
       notifications.show({
-        message: "Error removing card: 404",
+        message: url.includes("deck")
+          ? "Error deleting deck!"
+          : "Error removing card!",
         color: "red",
         position: "bottom-right",
       });
@@ -133,7 +149,7 @@ export class IApi {
     }
 
     notifications.show({
-      message: "Card removed!",
+      message: url.includes("deck") ? "Deck deleted!" : "Card removed!",
       color: "green",
       position: "bottom-right",
     });

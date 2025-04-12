@@ -87,6 +87,36 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  border-radius: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+          0deg,
+          transparent,
+          transparent 30%,
+          rgba(0, 255, 255, 0.2)
+  );
+  transform: rotate(-45deg);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  z-index: 1;
+}
+
+.card:hover {
+  box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.25);
+}
+
+.card:hover::before {
+  transform: rotate(-45deg) translateY(100%);
+  opacity: 1;
 }
 
 .hover-bar {
@@ -224,24 +254,6 @@
   gap: 6px;
 }
 
-/* Boutons + / - */
-.deck-card-quantity .quantity-btn {
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.2s ease;
-  background: transparent;
-  border: none;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.deck-card-quantity:hover .quantity-btn {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Le nom de la carte */
 .deck-card-text {
   position: absolute;
   top: 50%;
@@ -253,8 +265,49 @@
   transition: opacity 0.2s ease;
 }
 
-/* 👉 Disparition du texte UNIQUEMENT quand on hover .deck-card-quantity */
 .deck-card-quantity:hover ~ .deck-card-text {
   opacity: 0;
+}
+
+.deck-card-quantity .quantity-btn {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.2s ease;
+}
+
+.deck-card-quantity:hover .quantity-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+.card-test {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+.card-test::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -6px;
+  border-radius: 12px;
+  background: radial-gradient(circle, rgba(255,215,0,0.4), transparent 70%);
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.card-test:hover::after {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+
+
+.holographic-card:hover {
+  box-shadow: 0 0 20px rgba(0,255,255,0.5);
 }
 

@@ -71,24 +71,23 @@ function DeckCreate({ opened, close }: { opened: boolean; close: () => void }) {
           <Action
             label={"create"}
             disabled={!name || !hero}
-            onClick={({ api }) => {
-              api
-                .post(
-                  "/user/:id/deck",
-                  { id: 1 },
-                  {
-                    name: name,
-                    hero: hero,
-                    type: format,
-                  },
-                )
-                .then((r) => {
-                  setDecks(r.results);
+            onClick={async ({ api }) => {
+              await api.post(
+                "/user/:id/deck",
+                { id: 1 },
+                {
+                  name: name,
+                  hero: hero,
+                  type: format,
+                },
+                (json) => {
+                  setDecks(json.results);
                   close();
                   setName("");
                   setHero("");
                   setFormat("Blitz");
-                });
+                },
+              );
             }}
           />
         </Flex>

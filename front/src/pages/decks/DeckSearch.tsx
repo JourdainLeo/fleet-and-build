@@ -15,7 +15,28 @@ function DeckSearch() {
   const setCount = useZustore((state) => state.setCount);
   const setLoading = useZustore((state) => state.setLoading);
   const setDeck = useZustore((state) => state.setDeck);
-  const collection = useZustore((state) => state.collection);
+  const maxQuantity = deck?.type === "Blitz" ? 2 : 3;
+
+  function isEquipmentSlotTaken(slot: string): boolean {
+    return deck?.cards.some((card) => card.subtypes?.includes(slot)) ?? false;
+  }
+
+  function getEquippedWeapons(deck: DeckApi): CollectionCard[] {
+    return deck.cards.filter((c) => c.types?.includes("Weapon"));
+  }
+
+  function isValidWeaponLoadout(): boolean {
+    if (!deck) return false;
+    const weapons = getEquippedWeapons(deck);
+    if (weapons.length === 0) return true;
+    if (weapons.length === 1) {
+      return !weapons[0].subtypes.includes("2H");
+    }
+    if (weapons.length === 2) {
+      return weapons.every((w) => w.subtypes?.includes("1H"));
+    }
+    return false;
+  }
 
   return (
     <Flex flex={1}>
@@ -35,10 +56,7 @@ function DeckSearch() {
             return (
               <Flex className="hover-bar" gap={16}>
                 <Action
-                  disabled={
-                    !collection.find((c) => c.card_id === item.card_id)
-                      ?.quantity
-                  }
+                  disabled={!deck.cards.find((c) => c.card_id === item.card_id)}
                   className="card-button"
                   icon={<IconMinus />}
                   onClick={() => {
@@ -61,13 +79,25 @@ function DeckSearch() {
                   }}
                 />
                 <Text fw={900} size={"20"}>
-                  {collection
-                    .find((c) => c.card_id === item.card_id)
-                    ?.quantity.toString() || "0"}
+                  {deck.cards.find((c) => c.card_id === item.card_id)
+                    ?.quantity ?? 0}
                 </Text>
                 <Action
                   className="card-button"
                   icon={<IconPlus />}
+                  disabled={
+                    deck.cards.find((c) => c.card_id === item.card_id)
+                      ?.quantity === maxQuantity ||
+                    item.subtypes?.some(
+                      (slot) =>
+                        ["Head", "Chest", "Arms", "Legs"].includes(slot) &&
+                        isEquipmentSlotTaken(slot),
+                    ) ||
+                    item.types?.some(
+                      (slot) =>
+                        ["Weapon"].includes(slot) && !isValidWeaponLoadout(),
+                    )
+                  }
                   onClick={() => {
                     const newDeck = {
                       ...deck,

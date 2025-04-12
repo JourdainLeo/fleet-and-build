@@ -1,8 +1,13 @@
-import type { CollectionCard } from "@fleet-and-build/api";
+import type { CollectionCard, DeckApi } from "@fleet-and-build/api";
 import { Box, Image, Text } from "@mantine/core";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { motion } from "framer-motion";
+import { Action } from "../../../components/Action";
+import { useZustore } from "../../../services/zustore";
 
 function CardBanner({ card }: { card: CollectionCard }) {
+  const setDeck = useZustore((state) => state.setDeck);
+  const deck = useZustore((state) => state.deck);
   return (
     <motion.div
       layout
@@ -18,30 +23,83 @@ function CardBanner({ card }: { card: CollectionCard }) {
               ? "red-banner.png"
               : card.pitch === 2
                 ? "yellow-banner.png"
-                : "blue-banner.png"
+                : card.pitch === 3
+                  ? "blue-banner.png"
+                  : "equipment-banner.png"
           }
         />
 
-        <Text fz="sm" className="deck-card-quantity">
-          <button
-            className="quantity-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              // remove
+        <Text
+          fz="sm"
+          className="deck-card-quantity"
+          style={typeof card.pitch !== "number" ? { top: 9 } : {}}
+        >
+          <Action
+            className={"quantity-btn"}
+            variant={"subtle"}
+            icon={<IconMinus size={12} color={"white"} />}
+            onClick={() => {
+              const newDeck = {
+                ...deck,
+                cards: deck?.cards.reduce((acc, c) => {
+                  if (c.card_id === card.card_id) {
+                    const newQuantity = c.quantity - 1;
+                    if (newQuantity > 0) {
+                      acc.push({ ...c, quantity: newQuantity });
+                    }
+                  } else {
+                    acc.push(c);
+                  }
+                  return acc;
+                }, [] as CollectionCard[]),
+              };
+
+              setDeck(newDeck as DeckApi);
             }}
-          >
-            -
-          </button>
+            size={"xs"}
+          />
           {card.quantity}
-          <button
-            className="quantity-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              // add
+          <Action
+            className={"quantity-btn"}
+            variant={"subtle"}
+            icon={<IconPlus size={12} color={"white"} />}
+            size={"xs"}
+            onClick={() => {
+              const newDeck = {
+                ...deck,
+                cards: (() => {
+                  let found = false;
+
+                  const updatedCards = deck?.cards.reduce(
+                    (acc, c) => {
+                      if (c.card_id === card.card_id) {
+                        found = true;
+                        acc.push({
+                          ...c,
+                          quantity: c.quantity + 1,
+                        });
+                      } else {
+                        acc.push(c);
+                      }
+                      return acc;
+                    },
+                    [] as typeof deck.cards,
+                  );
+
+                  if (!found && updatedCards) {
+                    updatedCards.push({
+                      ...card,
+                      quantity: 1,
+                    } as CollectionCard);
+                  }
+
+                  return updatedCards;
+                })(),
+              };
+
+              setDeck(newDeck as DeckApi);
             }}
-          >
-            +
-          </button>
+          />
         </Text>
         <Text
           size="lg"

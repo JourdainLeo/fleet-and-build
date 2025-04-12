@@ -35,7 +35,7 @@ function CardGrid<T extends Card | CollectionCard>({
                 <Image
                   src={item.image.normal}
                   fit="contain"
-                  className="card-image fade-in"
+                  className="fade-in"
                   loading={"lazy"}
                 />
 

@@ -1,4 +1,3 @@
-import { Combobox } from "@mantine/core";
 import {
   createRootRoute,
   createRoute,
@@ -8,7 +7,7 @@ import App from "../App";
 import Collection from "../pages/Collection";
 import Decks from "../pages/Decks";
 import Home from "../pages/Home";
-import Search = Combobox.Search;
+import Search from "../pages/Search";
 
 const rootRoute = createRootRoute({
   component: App,

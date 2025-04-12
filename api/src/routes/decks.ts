@@ -67,10 +67,11 @@ export async function decksRoutes(fastify: FastifyInstance) {
         }),
       );
 
-      console.log("results ", results);
       return reply.send({
         count: results.length,
-        results: results,
+        results: results.sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ) as DeckApi[],
       });
     },
   );
@@ -116,7 +117,12 @@ export async function decksRoutes(fastify: FastifyInstance) {
         .set({ decks: JSON.stringify(decks) })
         .where(eq(usersTable.id, id));
 
-      return reply.send({ count: decks.length, results: decks as DeckApi[] });
+      return reply.send({
+        count: decks.length,
+        results: decks.sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ) as DeckApi[],
+      });
     },
   );
 
@@ -174,7 +180,12 @@ export async function decksRoutes(fastify: FastifyInstance) {
 
       return reply.send({
         count: result.length,
-        results: { ...deck, cards: result as CollectionCard[] } as DeckApi,
+        results: {
+          ...deck,
+          cards: result.sort((a, b) =>
+            a.card_id.localeCompare(b.card_id),
+          ) as CollectionCard[],
+        } as DeckApi,
       });
     },
   );
@@ -188,7 +199,6 @@ export async function decksRoutes(fastify: FastifyInstance) {
         .select()
         .from(usersTable)
         .where(eq(usersTable.id, id));
-      console.log("eee111");
 
       if (!user) {
         return reply.status(404).send();
@@ -197,13 +207,11 @@ export async function decksRoutes(fastify: FastifyInstance) {
       const decks = user.decks as User["decks"];
       const deckIndex = decks.findIndex((deck) => deck.id === Number(deck_id));
 
-      console.log("eeee", Number(deck_id), deck_id, request.params, deckIndex);
       if (deckIndex === -1) {
         return reply.status(404).send();
       }
 
       decks.splice(deckIndex, 1);
-      console.log("eeee22");
 
       await db
         .update(usersTable)
@@ -212,7 +220,9 @@ export async function decksRoutes(fastify: FastifyInstance) {
 
       return reply.send({
         count: decks.length,
-        results: decks as DeckApi[],
+        results: decks.sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ) as DeckApi[],
       });
     },
   );

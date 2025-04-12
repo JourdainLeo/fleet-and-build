@@ -1,5 +1,6 @@
 import type { DeckApi } from "@fleet-and-build/api";
 import { Flex, Image, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import {
   IconClipboard,
   IconCopy,
@@ -14,7 +15,6 @@ function DeckContainer({ deck, hover }: { deck: DeckApi; hover?: boolean }) {
   const setDeck = useZustore((state) => state.setDeck);
   const setDecks = useZustore((state) => state.setDecks);
 
-  console.log(deck);
   return (
     <motion.div
       layout
@@ -51,8 +51,9 @@ function DeckContainer({ deck, hover }: { deck: DeckApi; hover?: boolean }) {
             <Action
               icon={<IconClipboard size={16} color={"gray"} />}
               variant={"subtle"}
-              onClick={({}, e) => {
+              onClick={async ({}, e) => {
                 e.stopPropagation();
+                await exportDeckToClipboard(deck);
               }}
             />
             <Action
@@ -85,5 +86,30 @@ function DeckContainer({ deck, hover }: { deck: DeckApi; hover?: boolean }) {
     </motion.div>
   );
 }
+
+const exportDeckToClipboard = async (deck: DeckApi) => {
+  try {
+    const { id, ...deckWithoutId } = deck;
+
+    const json = JSON.stringify(deckWithoutId);
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(json);
+    const base64 = btoa(String.fromCharCode(...data));
+    await navigator.clipboard.writeText(base64);
+
+    notifications.show({
+      message: "Deck exported into clipboard !",
+      color: "green",
+      position: "bottom-right",
+    });
+  } catch (err) {
+    notifications.show({
+      message: "Error during export " + err,
+      color: "red",
+      position: "bottom-right",
+    });
+  }
+};
 
 export default DeckContainer;

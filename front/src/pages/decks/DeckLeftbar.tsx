@@ -1,3 +1,4 @@
+import type { CollectionCard } from "@fleet-and-build/api";
 import { Divider, Flex, ScrollArea } from "@mantine/core";
 import { AnimatePresence } from "framer-motion";
 import { useZustore } from "../../services/zustore";
@@ -9,7 +10,24 @@ import LeftbarHeader from "./leftbar/LeftbarHeader";
 function DeckLeftbar({ open }: { open: () => void }) {
   const deck = useZustore((state) => state.deck);
   const decks = useZustore((state) => state.decks);
-  const setDeck = useZustore((state) => state.setDeck);
+
+  const isType = (card: any, type: string) => card.types?.includes(type);
+
+  const renderCardGroup = (cards: CollectionCard[], label: string) => {
+    if (cards.length === 0) return null;
+
+    const displayLabel = `${label} (${cards.length})`;
+
+    return (
+      <>
+        <Divider label={displayLabel} labelPosition="center" my={8} />
+        {cards.map((card) => (
+          <CardBanner key={card.card_id} card={card} />
+        ))}
+      </>
+    );
+  };
+
   return (
     <Flex
       style={{ borderRight: "1px solid var(--mantine-color-dark-4)" }}
@@ -18,15 +36,31 @@ function DeckLeftbar({ open }: { open: () => void }) {
       <LeftbarHeader />
       <Divider orientation={"horizontal"} w={"100%"} />
       <ScrollArea h={"100%"}>
-        <Flex p={16} direction={"column"} gap={!deck ? 16 : 3}>
+        <Flex p={16} direction={"column"} gap={3}>
           <AnimatePresence>
-            {!deck
-              ? decks.map((deck) => (
-                  <DeckContainer key={deck.id} deck={deck} hover />
-                ))
-              : deck.cards.map((card) => (
-                  <CardBanner key={card.card_id} card={card} />
-                ))}
+            {!deck ? (
+              decks.map((deck) => (
+                <DeckContainer key={deck.id} deck={deck} hover />
+              ))
+            ) : (
+              <>
+                {renderCardGroup(
+                  deck.cards.filter((card) => isType(card, "Equipment")),
+                  "Equipment",
+                )}
+                {renderCardGroup(
+                  deck.cards.filter((card) => isType(card, "Weapon")),
+                  "Weapons",
+                )}
+                {renderCardGroup(
+                  deck.cards.filter(
+                    (card) =>
+                      !isType(card, "Equipment") && !isType(card, "Weapon"),
+                  ),
+                  "Cards",
+                )}
+              </>
+            )}
           </AnimatePresence>
         </Flex>
       </ScrollArea>
