@@ -1,11 +1,14 @@
+import type { CollectionCard } from "@fleet-and-build/api";
 import { Flex, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Action } from "../components/Action";
 import CardGrid from "../components/CardGrid";
 import Filter from "../components/Filter";
 import { useApi } from "../services/api";
 import { useZustore } from "../services/zustore";
+import Details from "./collection/Details";
 
 function Search() {
   const api = useApi();
@@ -15,6 +18,9 @@ function Search() {
   const collection = useZustore((state) => state.collection);
   const cards = useZustore((state) => state.cards);
   const setCollection = useZustore((state) => state.setCollection);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [current, setCurrent] = useState<CollectionCard>();
+  const [imageLoading, setImageLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -41,6 +47,11 @@ function Search() {
       }}
     >
       <CardGrid
+        onClick={(item) => {
+          open();
+          setCurrent(item as CollectionCard);
+          setImageLoading(true);
+        }}
         items={cards}
         render={(item) => {
           return (
@@ -51,7 +62,8 @@ function Search() {
                 }
                 className="card-button"
                 icon={<IconMinus />}
-                onClick={async ({ api }) => {
+                onClick={async ({ api }, e) => {
+                  e.stopPropagation();
                   await api.delete(
                     "/user/:id/collection/:card_id",
                     {
@@ -72,7 +84,9 @@ function Search() {
               <Action
                 className="card-button"
                 icon={<IconPlus />}
-                onClick={async ({ api }) => {
+                onClick={async ({ api }, e) => {
+                  e.stopPropagation();
+
                   await api.put(
                     "/user/:id/collection",
                     { card_id: item.card_id },
@@ -88,7 +102,15 @@ function Search() {
             </Flex>
           );
         }}
-      ></CardGrid>
+      />
+      <Details
+        current={current}
+        opened={opened}
+        close={close}
+        imageLoading={imageLoading}
+        setImageLoading={setImageLoading}
+        setCurrent={setCurrent}
+      />
     </Filter>
   );
 }

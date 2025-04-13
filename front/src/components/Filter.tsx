@@ -63,8 +63,6 @@ function Filter({
   const order = useZustore((s) => s.order);
   const setFilter = useZustore((state) => state.setFilter);
 
-  console.log(pitch_operator, pitch);
-
   const activeFilters = {
     // Use to iterate over filters
     hero,

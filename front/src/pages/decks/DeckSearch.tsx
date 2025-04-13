@@ -1,11 +1,14 @@
 import type { CollectionCard, DeckApi } from "@fleet-and-build/api";
 import { Flex, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
+import { useState } from "react";
 import { Action } from "../../components/Action";
 import CardGrid from "../../components/CardGrid";
 import Filter from "../../components/Filter";
 import { useApi } from "../../services/api";
 import { useZustore } from "../../services/zustore";
+import Details from "../collection/Details";
 
 function DeckSearch() {
   const deck = useZustore((state) => state.deck);
@@ -16,6 +19,9 @@ function DeckSearch() {
   const setLoading = useZustore((state) => state.setLoading);
   const setDeck = useZustore((state) => state.setDeck);
   const maxQuantity = deck?.type === "Blitz" ? 2 : 3;
+  const [opened, { open, close }] = useDisclosure(false);
+  const [current, setCurrent] = useState<CollectionCard>();
+  const [imageLoading, setImageLoading] = useState(false);
 
   function isEquipmentSlotTaken(slot: string): boolean {
     return deck?.cards.some((card) => card.subtypes?.includes(slot)) ?? false;
@@ -50,7 +56,13 @@ function DeckSearch() {
         }}
       >
         <CardGrid
+          onClick={(item) => {
+            open();
+            setCurrent(item as CollectionCard);
+            setImageLoading(true);
+          }}
           items={cards}
+          hover={!deck}
           render={(item) => {
             if (!deck) return;
             return (
@@ -59,7 +71,8 @@ function DeckSearch() {
                   disabled={!deck.cards.find((c) => c.card_id === item.card_id)}
                   className="card-button"
                   icon={<IconMinus />}
-                  onClick={() => {
+                  onClick={({}, e) => {
+                    e.stopPropagation();
                     const newDeck = {
                       ...deck,
                       cards: deck?.cards.reduce((acc, c) => {
@@ -98,7 +111,9 @@ function DeckSearch() {
                         ["Weapon"].includes(slot) && !isValidWeaponLoadout(),
                     )
                   }
-                  onClick={() => {
+                  onClick={({}, e) => {
+                    e.stopPropagation();
+
                     const newDeck = {
                       ...deck,
                       cards: (() => {
@@ -139,6 +154,14 @@ function DeckSearch() {
           }}
         />
       </Filter>
+      <Details
+        current={current}
+        opened={opened}
+        close={close}
+        imageLoading={imageLoading}
+        setImageLoading={setImageLoading}
+        setCurrent={setCurrent}
+      />
     </Flex>
   );
 }
